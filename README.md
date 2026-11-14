@@ -1,11 +1,18 @@
 # Cake Game
 
-A fun cake-themed game project.
+A cake-themed browser game built with vanilla HTML, CSS, and JavaScript.
 
 ## Project Structure
 
-_To be defined as the project evolves._
+```
+cake-game/
+├── src/           # Game source files (HTML, CSS, JS)
+├── assets/
+│   └── images/    # Sprites and artwork
+├── docs/          # Design documents and game specs
+└── README.md
+```
 
-## Getting Started
+## Status
 
-_Setup instructions coming soon._
+Early development — project scaffolded.
