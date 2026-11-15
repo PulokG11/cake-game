@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { autoAssignPlayer } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
@@ -73,7 +74,7 @@ export default function HomePage() {
 
       <p className="text-center mt-4 text-xs text-gray-400">
         Session facilitator?{' '}
-        <a href="/admin" className="text-cake-600 hover:underline">Go to admin panel →</a>
+        <Link href="/admin" className="text-cake-600 hover:underline">Go to admin panel →</Link>
       </p>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams } from 'next/navigation';
+import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { subscribeToGame, getGame, updateGameState, updateFullGameState } from '@/lib/supabase';
 import { processRound, resolveOrders, allHumansSubmitted } from '@/lib/gameLogic';
 import {
@@ -18,7 +18,15 @@ import { Badge } from '@/components/ui/Badge';
 const SUMMARY_HOLD_SECONDS = 12;
 
 export default function GamePage() {
-  const { gameId } = useParams<{ gameId: string }>();
+  return (
+    <Suspense fallback={<div className="text-center mt-20 text-gray-400">Loading game...</div>}>
+      <GameContent />
+    </Suspense>
+  );
+}
+
+function GameContent() {
+  const gameId = useSearchParams().get('id') ?? '';
 
   const [game, setGame]           = useState<Game | null>(null);
   const [myRole, setMyRole]       = useState<Role | null>(null);

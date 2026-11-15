@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import {
   getAllGames,
   subscribeToAllGames,
@@ -535,9 +536,9 @@ function GameRow({ game }: { game: Game }) {
               Force Summary
             </Button>
           )}
-          <a href={`/admin/game/${game.id}`}>
+          <Link href={`/admin/game?id=${game.id}`}>
             <Button size="sm" variant="ghost">👁 Watch</Button>
-          </a>
+          </Link>
           <Button size="sm" variant="ghost"
             onClick={async () => {
               setLoading(true);

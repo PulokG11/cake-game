@@ -4,6 +4,32 @@ Every release is a git tag. Roll back a file with
 `git checkout <tag> -- <path>` then commit; roll back everything with `git revert`
 of the release commit. Finding IDs (F-xx) refer to PRD v2 §9.4.
 
+## v0.2.0 — GitHub Pages deployment
+
+Live at https://pulokg11.github.io/cake-game/ (deployed by `.github/workflows/pages.yml`
+on every push to `main`; runs `npm test` before building).
+
+- Static export (`output: 'export'`, `trailingSlash`, `basePath` from
+  `NEXT_PUBLIC_BASE_PATH=/cake-game` set in CI only; local dev still serves at `/`).
+- Dynamic routes replaced by query-param routes because Pages has no server:
+  `/game/[gameId]` -> `/game?id=<id>`, `/admin/game/[gameId]` -> `/admin/game?id=<id>`.
+  Old `/game/<id>` links no longer work.
+- Raw `<a href>` links replaced with `next/link`; tutorial iframe path is base-path aware.
+- New Supabase project `cake-game` (Mumbai, free tier) with the upstream schema and the
+  sequence-based `assign_player_atomic`. Secrets `NEXT_PUBLIC_SUPABASE_URL`,
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_ADMIN_PASSWORD` are GitHub Actions secrets.
+  The admin password is a fresh value, not the upstream default.
+
+**Security (unchanged from upstream, F-01):** RLS is disabled on `games` and
+`session_settings`, and `NEXT_PUBLIC_*` values are embedded in the public JS bundle, so
+the admin password is a browser gate only and anyone with the anon key can read or write
+every row (including player emails). Fine for a workshop; not for real personal data.
+
+**Rollback:** disable the workflow or `git revert` the v0.2.0 commit (restores the
+dynamic routes and drops the export config). Backend: `drop table public.games,
+public.session_settings; drop function assign_player_atomic(text, text);` on the
+`cake-game` Supabase project.
+
 ## v0.1.0 — Release 0 (part 1): order capture and demand schedule
 
 **Fixes F-03: missing-order policy**

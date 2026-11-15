@@ -1,6 +1,7 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { getGame, subscribeToGame, updateGameState, updateFullGameState } from '@/lib/supabase';
 import { processRound } from '@/lib/gameLogic';
 import { Game, ROLES, ROLE_LABELS, Role, RoleState, GameState } from '@/lib/types';
@@ -158,7 +159,15 @@ function ChartsSection({ state }: { state: GameState }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminGamePage() {
-  const { gameId } = useParams<{ gameId: string }>();
+  return (
+    <Suspense fallback={<div className="text-center mt-20 text-gray-400">Loading game...</div>}>
+      <AdminGameContent />
+    </Suspense>
+  );
+}
+
+function AdminGameContent() {
+  const gameId = useSearchParams().get('id') ?? '';
   const [game, setGame]           = useState<Game | null>(null);
   const [advancing, setAdvancing] = useState(false);
   const [pausing, setPausing]     = useState(false);
@@ -248,7 +257,7 @@ export default function AdminGamePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <a href="/admin" className="text-xs text-cake-500 hover:underline">← Back to Admin</a>
+          <Link href="/admin" className="text-xs text-cake-500 hover:underline">← Back to Admin</Link>
           <h2 className="text-2xl font-bold text-gray-800 mt-1">{teamName}</h2>
           <div className="flex items-center gap-3 mt-1">
             <Badge variant={

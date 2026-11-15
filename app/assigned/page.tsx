@@ -24,7 +24,7 @@ function AssignedContent() {
     const unsub = subscribeToGame(gameId, g => {
       setGame(g);
       if (g?.state.phase === 'onboarding' || g?.state.phase === 'ordering') {
-        router.push(`/game/${gameId}`);
+        router.push(`/game?id=${gameId}`);
       }
     });
     return unsub;

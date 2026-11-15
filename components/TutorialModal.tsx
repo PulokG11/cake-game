@@ -49,7 +49,7 @@ export function TutorialModal({ onClose }: TutorialModalProps) {
 
       {/* iframe fills remaining space */}
       <iframe
-        src="/tutorial.html"
+        src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/tutorial.html`}
         className="flex-1 w-full border-0"
         title="Cake Game Tutorial"
         allow="autoplay"
