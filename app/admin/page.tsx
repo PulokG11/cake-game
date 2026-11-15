@@ -232,7 +232,7 @@ function Leaderboard({ games }: { games: Game[] }) {
 
   return (
     <Card>
-      <p className="font-semibold text-cake-700 mb-3">🏆 Leaderboard</p>
+      <p className="font-display text-xl font-bold text-forest-800 mb-3">Leaderboard</p>
       <div className="space-y-2">
         {ranked.map((game, idx) => {
           const players  = Object.values(game.players ?? {});
@@ -253,8 +253,8 @@ function Leaderboard({ games }: { games: Game[] }) {
               key={game.id}
               className={`flex items-center gap-3 p-3 rounded-xl border ${
                 idx === 0
-                  ? 'bg-yellow-50 border-yellow-200'
-                  : 'bg-gray-50 border-gray-100'
+                  ? 'bg-amber-50 border-amber-200'
+                  : 'bg-cream-100 border-cream-200'
               }`}
             >
               <span className="text-xl w-8 text-center">{medal}</span>
@@ -269,7 +269,7 @@ function Leaderboard({ games }: { games: Game[] }) {
                 </p>
               </div>
               <div className="text-right shrink-0">
-                <p className="font-bold text-cake-700">${totalCost.toFixed(2)}</p>
+                <p className="font-display text-lg font-bold text-cake-700 tabular">${totalCost.toFixed(2)}</p>
                 <p className="text-xs text-gray-400">team cost</p>
               </div>
             </div>
@@ -368,7 +368,7 @@ export default function AdminPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-cake-700">🎛️ Admin Panel</h2>
+          <h2 className="text-3xl font-extrabold text-forest-800">Admin Panel</h2>
           <div className="flex items-center gap-2 mt-0.5">
             <p className="text-sm text-gray-500">Manage game sessions</p>
             {watchdogActive && (
@@ -395,16 +395,16 @@ export default function AdminPage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         <Card className="text-center">
-          <p className="text-xs text-gray-400">Teams</p>
-          <p className="text-3xl font-bold text-cake-700">{games.length}</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">Teams</p>
+          <p className="font-display text-4xl font-black text-cake-600 tabular">{games.length}</p>
         </Card>
         <Card className="text-center">
-          <p className="text-xs text-gray-400">Human Players</p>
-          <p className="text-3xl font-bold text-cake-700">{totalPlayers}</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">Human Players</p>
+          <p className="font-display text-4xl font-black text-cake-600 tabular">{totalPlayers}</p>
         </Card>
         <Card className="text-center">
-          <p className="text-xs text-gray-400">Active Games</p>
-          <p className="text-3xl font-bold text-cake-700">{activeGames}</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gray-400">Active Games</p>
+          <p className="font-display text-4xl font-black text-cake-600 tabular">{activeGames}</p>
         </Card>
       </div>
 

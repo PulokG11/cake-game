@@ -2,6 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  @apply bg-cake-50 text-gray-900;
+@layer base {
+  html,
+  body {
+    @apply bg-cream-50 text-gray-900 antialiased;
+  }
+
+  h1,
+  h2 {
+    @apply font-display tracking-tight;
+  }
+
+  ::selection {
+    background: #f8c2c9;
+    color: #4a0a1b;
+  }
+
+  /* Playfair defaults to old-style numerals; scores and costs need lining figures. */
+  .font-display {
+    font-variant-numeric: lining-nums;
+  }
+
+  /* Numbers line up in costs, timers and stats. */
+  .tabular {
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+}
+
+@layer components {
+  /* Chocolate ganache drip hanging off the header. */
+  .drip {
+    height: 22px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 22'%3E%3Cg fill='%23170D0E'%3E%3Crect width='120' height='6'/%3E%3Crect x='14' width='10' height='19' rx='5'/%3E%3Crect x='56' width='8' height='13' rx='4'/%3E%3Crect x='92' width='10' height='17' rx='5'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 120px 22px;
+  }
+
+  /* Soft frosting texture for hero panels. */
+  .frosting {
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.7) 0 2px, transparent 3px),
+      radial-gradient(circle at 78% 30%, rgba(255, 255, 255, 0.6) 0 2px, transparent 3px),
+      radial-gradient(circle at 46% 82%, rgba(255, 255, 255, 0.6) 0 2px, transparent 3px),
+      linear-gradient(180deg, #fff 0%, #fef3f4 100%);
+  }
 }

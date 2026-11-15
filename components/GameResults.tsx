@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Game, ROLES, ROLE_LABELS, Role, RoleState } from '@/lib/types';
 import { Card } from './ui/Card';
 import { TutorialModal } from './TutorialModal';
+import { CakeMark, RoleIcon } from './brand/Brand';
+import { ROLE_COLORS, CHART } from '@/lib/theme';
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -51,13 +53,6 @@ function Sparkline({
 
 // ─── SVG Line chart ───────────────────────────────────────────────────────────
 
-const ROLE_COLORS: Record<Role, string> = {
-  manufacturer: '#7C3AED',
-  distributor:  '#2563EB',
-  wholesaler:   '#059669',
-  retailer:     '#D97706',
-};
-
 function LineChart({
   title,
   series,
@@ -86,19 +81,19 @@ function LineChart({
   );
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-3">
-      <p className="text-xs font-semibold text-gray-600 mb-1">{title}</p>
+    <div className="bg-white rounded-2xl border border-cream-200 shadow-card p-3">
+      <p className="text-xs font-bold uppercase tracking-wide text-forest-600 mb-1">{title}</p>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full">
         {yTicks.map((tick, i) => (
           <g key={i}>
-            <line x1={pl} y1={yOf(tick)} x2={pl + chartW} y2={yOf(tick)} stroke="#f0f0f0" strokeWidth="1" />
-            <text x={pl - 4} y={yOf(tick) + 3} textAnchor="end" fontSize="9" fill="#aaa">{tick}</text>
+            <line x1={pl} y1={yOf(tick)} x2={pl + chartW} y2={yOf(tick)} stroke={CHART.grid} strokeWidth="1" />
+            <text x={pl - 4} y={yOf(tick) + 3} textAnchor="end" fontSize="9" fill={CHART.tick}>{tick}</text>
           </g>
         ))}
-        <line x1={pl} y1={pt} x2={pl} y2={pt + chartH} stroke="#e5e7eb" strokeWidth="1" />
-        <line x1={pl} y1={pt + chartH} x2={pl + chartW} y2={pt + chartH} stroke="#e5e7eb" strokeWidth="1" />
+        <line x1={pl} y1={pt} x2={pl} y2={pt + chartH} stroke={CHART.axis} strokeWidth="1" />
+        <line x1={pl} y1={pt + chartH} x2={pl + chartW} y2={pt + chartH} stroke={CHART.axis} strokeWidth="1" />
         {xTicks.map(i => (
-          <text key={i} x={xOf(i)} y={pt + chartH + 13} textAnchor="middle" fontSize="9" fill="#aaa">
+          <text key={i} x={xOf(i)} y={pt + chartH + 13} textAnchor="middle" fontSize="9" fill={CHART.tick}>
             W{i + 1}
           </text>
         ))}
@@ -121,7 +116,7 @@ function LineChart({
         {ROLES.map((role, i) => (
           <g key={role} transform={`translate(${pl + i * 115}, ${H - 14})`}>
             <line x1="0" y1="0" x2="14" y2="0" stroke={ROLE_COLORS[role]} strokeWidth="2" />
-            <text x="17" y="4" fontSize="9" fill="#555">{ROLE_LABELS[role]}</text>
+            <text x="17" y="4" fontSize="9" fill={CHART.label}>{ROLE_LABELS[role]}</text>
           </g>
         ))}
       </svg>
@@ -162,29 +157,30 @@ export function GameResults({ game, teamName }: GameResultsProps) {
     <div className="space-y-6">
       {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-cake-700">🎂 Game Over</h2>
+        <CakeMark size={56} className="mx-auto" />
+        <h2 className="text-4xl font-extrabold text-forest-800 mt-2">Game Over</h2>
         {teamName && (
-          <p className="text-lg font-semibold text-cake-600 mt-1">🏆 {teamName}</p>
+          <p className="font-display text-xl font-bold text-cake-600 mt-1">{teamName}</p>
         )}
         <p className="text-gray-500 mt-1">Final results after {config.totalRounds} rounds</p>
         <button
           onClick={() => setShowTutorial(true)}
           className="mt-2 text-sm text-cake-600 hover:text-cake-800 underline underline-offset-2"
         >
-          📖 Replay Tutorial
+          Replay tutorial
         </button>
       </div>
 
       {/* Team totals */}
-      <Card className="text-center bg-cake-50">
+      <Card className="text-center !bg-forest-900 !border-forest-900 !shadow-lift py-7">
         {teamName && (
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{teamName}</p>
+          <p className="text-xs text-cake-300 uppercase tracking-[0.2em] mb-1">{teamName}</p>
         )}
-        <p className="text-sm text-gray-500">Total Team Cost</p>
-        <p className="text-4xl font-bold text-cake-700 my-1">${teamTotal.toFixed(2)}</p>
-        <div className="flex justify-center gap-6 text-sm text-gray-500 mt-2">
-          <span>🗑️ {totalWasted} units wasted</span>
-          <span>📉 {totalLost} units lost</span>
+        <p className="text-sm text-cream-300">Total Team Cost</p>
+        <p className="font-display text-6xl font-black text-cream-50 my-1 tabular">${teamTotal.toFixed(2)}</p>
+        <div className="flex justify-center gap-6 text-sm text-cream-300/90 mt-3">
+          <span>{totalWasted} units wasted</span>
+          <span>{totalLost} units lost</span>
         </div>
       </Card>
 
@@ -209,7 +205,12 @@ export function GameResults({ game, teamName }: GameResultsProps) {
 
           return (
             <Card key={role}>
-              <h3 className="font-semibold text-gray-700 mb-3">{ROLE_LABELS[role]}</h3>
+              <h3 className="flex items-center gap-2.5 font-display text-lg font-bold text-forest-800 mb-3">
+                <span className="grid place-items-center h-9 w-9 rounded-xl text-white" style={{ background: ROLE_COLORS[role] }}>
+                  <RoleIcon role={role} size={19} />
+                </span>
+                {ROLE_LABELS[role]}
+              </h3>
 
               <div className="space-y-1 text-sm">
                 <Row label="Total cost"      value={`$${rs.totalCost.toFixed(2)}`}           bold />
@@ -221,17 +222,17 @@ export function GameResults({ game, teamName }: GameResultsProps) {
               </div>
 
               {/* Sparklines — always show all three so they're comparable across roles */}
-              <div className="mt-3 pt-3 border-t border-gray-100 space-y-1">
+              <div className="mt-3 pt-3 border-t border-cream-200 space-y-1">
                 <Sparkline
                   label="Inventory over rounds"
                   values={invHistory}
-                  color="bg-cake-300"
+                  color="bg-forest-300"
                   alwaysShow
                 />
                 <Sparkline
                   label="Wastage per round"
                   values={wastageHistory}
-                  color="bg-red-300"
+                  color="bg-red-400"
                   alwaysShow
                 />
                 <Sparkline
@@ -248,7 +249,7 @@ export function GameResults({ game, teamName }: GameResultsProps) {
 
       {/* Full performance charts — all 4 metrics across all echelons */}
       <div className="space-y-3">
-        <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">
+        <h3 className="font-bold text-cake-700 text-xs uppercase tracking-[0.16em]">
           Performance Charts
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

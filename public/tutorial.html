@@ -5,57 +5,61 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Cake Game — 60s Teaser</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&family=Playfair+Display:wght@700;800;900&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
-  html{width:100%;height:100%;overflow:hidden;background:#FFF8F0}
+  html{width:100%;height:100%;overflow:hidden;background:#FFF9F4}
   body{
     width:1280px;height:720px;overflow:hidden;
-    background:#FFF8F0;
-    font-family:'Inter',system-ui,sans-serif;
+    background:#FFF9F4;
+    font-family:'DM Sans',system-ui,sans-serif;
     user-select:none;
     transform-origin:top left;
     position:absolute;
   }
 
+  .mark{width:1em;height:1em;vertical-align:-0.12em;display:inline-block}
+  .ri{width:1.1em;height:1.1em;vertical-align:-0.18em;display:inline-block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .ricon .ri{width:34px;height:34px}
+
   /* ── Progress bar ── */
   #progress{
     position:absolute;bottom:0;left:0;height:5px;
-    background:#C26A1A;z-index:999;
+    background:#A31232;z-index:999;
     transition:width 0.1s linear;
   }
 
   /* ── Play overlay ── */
   #overlay{
     position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    background:rgba(59,26,8,0.55);z-index:998;cursor:pointer;
+    background:rgba(23,13,14,0.55);z-index:998;cursor:pointer;
   }
   #overlay .btn{
     width:110px;height:110px;border-radius:50%;
-    background:#C26A1A;display:flex;align-items:center;justify-content:center;
+    background:#A31232;display:flex;align-items:center;justify-content:center;
     font-size:44px;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.3);
   }
 
   /* ── Pause button ── */
   #pause-btn{
     position:absolute;bottom:14px;right:16px;z-index:997;
-    background:rgba(59,26,8,0.5);border:1.5px solid rgba(255,255,255,0.2);
-    color:#FFF8F0;font-size:13px;font-weight:700;
+    background:rgba(23,13,14,0.5);border:1.5px solid rgba(255,255,255,0.2);
+    color:#FFF9F4;font-size:13px;font-weight:700;
     padding:6px 14px;border-radius:20px;cursor:pointer;
     display:none;align-items:center;gap:6px;
     transition:background 0.15s ease;
   }
-  #pause-btn:hover{background:rgba(59,26,8,0.8)}
+  #pause-btn:hover{background:rgba(23,13,14,0.8)}
   #pause-icon{font-size:14px}
 
   /* ── Paused overlay ── */
   #pause-overlay{
     position:absolute;inset:0;display:none;
     align-items:center;justify-content:center;
-    background:rgba(59,26,8,0.45);z-index:996;cursor:pointer;
+    background:rgba(23,13,14,0.45);z-index:996;cursor:pointer;
   }
   #pause-overlay .resume-btn{
     width:90px;height:90px;border-radius:50%;
-    background:#C26A1A;display:flex;align-items:center;justify-content:center;
+    background:#A31232;display:flex;align-items:center;justify-content:center;
     font-size:36px;color:#fff;box-shadow:0 6px 24px rgba(0,0,0,0.3);
   }
 
@@ -69,13 +73,14 @@
   .slide.active{opacity:1;pointer-events:all}
 
   /* ── Typography ── */
-  h1{font-size:56px;font-weight:900;color:#3B1A08;line-height:1.1;text-align:center}
-  h2{font-size:42px;font-weight:800;color:#3B1A08;line-height:1.15;text-align:center}
-  .sub{font-size:24px;color:#7A4A20;margin-top:14px;text-align:center;max-width:860px;line-height:1.4}
-  .amber{color:#C26A1A}
-  .red{color:#DC2626}
-  .green{color:#059669}
-  .purple{color:#7C3AED}
+  h1,h2{font-family:'Playfair Display',Georgia,serif;letter-spacing:-0.01em}
+  h1{font-size:56px;font-weight:900;color:#211415;line-height:1.1;text-align:center}
+  h2{font-size:42px;font-weight:800;color:#211415;line-height:1.15;text-align:center}
+  .sub{font-size:24px;color:#5F4F4B;margin-top:14px;text-align:center;max-width:860px;line-height:1.4}
+  .amber{color:#A31232}
+  .red{color:#DE3B2C}
+  .green{color:#2C6B4C}
+  .purple{color:#3F2A29}
 
   /* ── Supply chain ── */
   .chain{
@@ -94,10 +99,10 @@
   .role .rlabel{font-size:17px;margin-top:2px}
   .role .ricon{font-size:30px}
 
-  .r-mfg{background:linear-gradient(135deg,#7C3AED,#6D28D9)}
-  .r-dst{background:linear-gradient(135deg,#2563EB,#1D4ED8)}
-  .r-whl{background:linear-gradient(135deg,#059669,#047857)}
-  .r-rtl{background:linear-gradient(135deg,#D97706,#B45309)}
+  .r-mfg{background:linear-gradient(135deg,#3F2A29,#2E1D1D)}
+  .r-dst{background:linear-gradient(135deg,#B3173A,#84102B)}
+  .r-whl{background:linear-gradient(135deg,#2C6B4C,#245640)}
+  .r-rtl{background:linear-gradient(135deg,#CC8A16,#A86E10)}
 
   /* ── Arrow connector ── */
   .connector{
@@ -130,7 +135,7 @@
     transition:all 0.6s ease;
   }
   .week-num{font-size:15px;font-weight:900}
-  .exp-note{font-size:11px;color:#6B7280;margin-top:6px;line-height:1.4}
+  .exp-note{font-size:11px;color:#7E6C67;margin-top:6px;line-height:1.4}
 
   /* ── Info lag section ── */
   .lag-panel{
@@ -166,22 +171,22 @@
   }
   .cost-card.show{opacity:1;transform:translateY(0) scale(1)}
   .cost-icon{font-size:38px;margin-bottom:8px}
-  .cost-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9CA3AF}
+  .cost-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#A8958F}
   .cost-val{font-size:38px;font-weight:900;margin:6px 0}
-  .cost-desc{font-size:13px;color:#6B7280;line-height:1.4}
+  .cost-desc{font-size:13px;color:#7E6C67;line-height:1.4}
 
   /* ── Title card ── */
   .title-wrap{
-    background:linear-gradient(135deg,#3B1A08,#5C2C0E);
+    background:linear-gradient(135deg,#211415,#3F2A29);
     border-radius:28px;padding:50px 80px;text-align:center;
-    width:100%;box-shadow:0 12px 48px rgba(59,26,8,0.25);
+    width:100%;box-shadow:0 12px 48px rgba(23,13,14,0.25);
   }
-  .title-wrap h1{color:#FFF8F0;font-size:72px}
-  .title-wrap .tagline{color:#C26A1A;font-size:22px;margin-top:10px;font-weight:600}
+  .title-wrap h1{color:#FFF9F4;font-size:72px}
+  .title-wrap .tagline{color:#F093A0;font-size:22px;margin-top:10px;font-weight:600}
   .pill-row{display:flex;gap:16px;justify-content:center;margin-top:28px;flex-wrap:wrap}
   .pill{
     background:rgba(255,248,240,0.1);border:1.5px solid rgba(255,248,240,0.2);
-    border-radius:10px;padding:10px 18px;color:#FFF8F0;
+    border-radius:10px;padding:10px 18px;color:#FFF9F4;
     font-size:14px;font-weight:700;letter-spacing:.03em;
     opacity:0;transform:translateY(10px);
     transition:opacity 0.4s ease,transform 0.4s ease;
@@ -240,33 +245,33 @@
 <!-- SLIDE 1  0–8s   Intro: Bakery + four hands                       -->
 <!-- ══════════════════════════════════════════════════════════════════ -->
 <div class="slide" id="s1">
-  <h1>🎂 Imagine a <span class="amber">Bakery.</span></h1>
+  <h1><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="5" y="55" width="54" height="4" rx="2" fill="#170D0E"/><rect x="9" y="43" width="46" height="12" rx="3" fill="#2E1D1D"/><rect x="9" y="39" width="46" height="4.5" fill="#FBF0E7"/><rect x="9" y="27" width="46" height="12" fill="#B3173A"/><rect x="7" y="19" width="50" height="11" rx="5.5" fill="#FBF0E7"/><rect x="15" y="26" width="6" height="12" rx="3" fill="#FBF0E7"/><rect x="29" y="26" width="6" height="8.5" rx="3" fill="#FBF0E7"/><rect x="43" y="26" width="6" height="14" rx="3" fill="#FBF0E7"/><circle cx="32" cy="13.5" r="6.5" fill="#D61F3E"/><circle cx="29.7" cy="11.2" r="1.8" fill="#fff" opacity=".55"/><path d="M32 7.2C33 3.4 36.6 1.6 40.4 2.4" stroke="#2C6B4C" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg> Imagine a <span class="amber">Bakery.</span></h1>
   <p class="sub">Cakes are baked, packed, shipped, and sold — through <strong>four stages.</strong><br>
   Each stage is played by a real person on your team.</p>
 
   <div class="chain" style="margin-top:36px">
-    <div class="role r-mfg" id="r0"><div class="ricon">🏭</div><div class="rlabel">Manufacturer</div></div>
+    <div class="role r-mfg" id="r0"><div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V10l6 4v-4l6 4V4h5v17H3Z"/><path d="M7 18h2M12 18h2M17 18h.01"/></svg></div><div class="rlabel">Manufacturer</div></div>
     <div class="connector" id="c0">
       <div class="arr-label amber">→ ships →</div>
-      <div class="arr-line"><svg viewBox="0 0 62 14"><line x1="0" y1="7" x2="52" y2="7" stroke="#C26A1A" stroke-width="2.5"/><polygon points="52,3 62,7 52,11" fill="#C26A1A"/></svg></div>
+      <div class="arr-line"><svg viewBox="0 0 62 14"><line x1="0" y1="7" x2="52" y2="7" stroke="#A31232" stroke-width="2.5"/><polygon points="52,3 62,7 52,11" fill="#A31232"/></svg></div>
     </div>
-    <div class="role r-dst" id="r1"><div class="ricon">🚚</div><div class="rlabel">Distributor</div></div>
+    <div class="role r-dst" id="r1"><div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h4l3.5 3.3V16H13"/><circle cx="6.5" cy="17.6" r="1.9"/><circle cx="16.5" cy="17.6" r="1.9"/></svg></div><div class="rlabel">Distributor</div></div>
     <div class="connector" id="c1">
       <div class="arr-label amber">→ ships →</div>
-      <div class="arr-line"><svg viewBox="0 0 62 14"><line x1="0" y1="7" x2="52" y2="7" stroke="#C26A1A" stroke-width="2.5"/><polygon points="52,3 62,7 52,11" fill="#C26A1A"/></svg></div>
+      <div class="arr-line"><svg viewBox="0 0 62 14"><line x1="0" y1="7" x2="52" y2="7" stroke="#A31232" stroke-width="2.5"/><polygon points="52,3 62,7 52,11" fill="#A31232"/></svg></div>
     </div>
-    <div class="role r-whl" id="r2"><div class="ricon">🏪</div><div class="rlabel">Wholesaler</div></div>
+    <div class="role r-whl" id="r2"><div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/><path d="M8 20v-6h8v6M8 17h8"/></svg></div><div class="rlabel">Wholesaler</div></div>
     <div class="connector" id="c2">
       <div class="arr-label amber">→ ships →</div>
-      <div class="arr-line"><svg viewBox="0 0 62 14"><line x1="0" y1="7" x2="52" y2="7" stroke="#C26A1A" stroke-width="2.5"/><polygon points="52,3 62,7 52,11" fill="#C26A1A"/></svg></div>
+      <div class="arr-line"><svg viewBox="0 0 62 14"><line x1="0" y1="7" x2="52" y2="7" stroke="#A31232" stroke-width="2.5"/><polygon points="52,3 62,7 52,11" fill="#A31232"/></svg></div>
     </div>
-    <div class="role r-rtl" id="r3"><div class="ricon">🛒</div><div class="rlabel">Retailer</div></div>
+    <div class="role r-rtl" id="r3"><div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l1.6-5h12.8L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0A2.7 2.7 0 0 0 20 9"/><path d="M5 12v8h14v-8M10 20v-5h4v5"/></svg></div><div class="rlabel">Retailer</div></div>
     <div class="connector" id="c3">
-      <div class="arr-label" style="color:#D97706">→ sells →</div>
-      <div class="arr-line"><svg viewBox="0 0 62 14"><line x1="0" y1="7" x2="52" y2="7" stroke="#D97706" stroke-width="2.5"/><polygon points="52,3 62,7 52,11" fill="#D97706"/></svg></div>
+      <div class="arr-label" style="color:#CC8A16">→ sells →</div>
+      <div class="arr-line"><svg viewBox="0 0 62 14"><line x1="0" y1="7" x2="52" y2="7" stroke="#CC8A16" stroke-width="2.5"/><polygon points="52,3 62,7 52,11" fill="#CC8A16"/></svg></div>
     </div>
-    <div class="role" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);width:120px" id="r4">
-      <div class="ricon">👤</div><div class="rlabel" style="font-size:14px">Customer</div>
+    <div class="role" style="background:linear-gradient(135deg,#F2C25E,#E6A532);width:120px" id="r4">
+      <div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-4 3.2-6.5 7-6.5s7 2.5 7 6.5"/></svg></div><div class="rlabel" style="font-size:14px">Customer</div>
     </div>
   </div>
 
@@ -279,7 +284,7 @@
 <!-- SLIDE 2  8–22s  Material flow: lead times between stages         -->
 <!-- ══════════════════════════════════════════════════════════════════ -->
 <div class="slide" id="s2">
-  <h2>🎂 <span class="amber">Material</span> flows <em>downstream</em> — with delay.</h2>
+  <h2><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="5" y="55" width="54" height="4" rx="2" fill="#170D0E"/><rect x="9" y="43" width="46" height="12" rx="3" fill="#2E1D1D"/><rect x="9" y="39" width="46" height="4.5" fill="#FBF0E7"/><rect x="9" y="27" width="46" height="12" fill="#B3173A"/><rect x="7" y="19" width="50" height="11" rx="5.5" fill="#FBF0E7"/><rect x="15" y="26" width="6" height="12" rx="3" fill="#FBF0E7"/><rect x="29" y="26" width="6" height="8.5" rx="3" fill="#FBF0E7"/><rect x="43" y="26" width="6" height="14" rx="3" fill="#FBF0E7"/><circle cx="32" cy="13.5" r="6.5" fill="#D61F3E"/><circle cx="29.7" cy="11.2" r="1.8" fill="#fff" opacity=".55"/><path d="M32 7.2C33 3.4 36.6 1.6 40.4 2.4" stroke="#2C6B4C" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg> <span class="amber">Material</span> flows <em>downstream</em> — with delay.</h2>
   <p class="sub">Once you place an order, you don't receive it straight away.<br>
   Each stage has a <strong>shipping lead time</strong> before cakes arrive.</p>
 
@@ -287,38 +292,38 @@
     <!-- Mfg -->
     <div style="text-align:center">
       <div class="role r-mfg pop" style="margin:0 auto">
-        <div class="ricon">🏭</div><div class="rlabel">Manufacturer</div>
+        <div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V10l6 4v-4l6 4V4h5v17H3Z"/><path d="M7 18h2M12 18h2M17 18h.01"/></svg></div><div class="rlabel">Manufacturer</div>
       </div>
-      <div style="font-size:12px;color:#7C3AED;font-weight:700;margin-top:6px">Production</div>
+      <div style="font-size:12px;color:#3F2A29;font-weight:700;margin-top:6px">Production</div>
     </div>
 
     <!-- Arrow Mfg→Dst: 2 weeks -->
     <div style="display:flex;flex-direction:column;align-items:center;width:90px">
-      <div style="font-size:13px;font-weight:800;color:#C26A1A;background:#FFF0DD;border-radius:8px;padding:3px 10px;white-space:nowrap">⏱ 2 weeks</div>
+      <div style="font-size:13px;font-weight:800;color:#A31232;background:#FBF0E7;border-radius:8px;padding:3px 10px;white-space:nowrap">⏱ 2 weeks</div>
       <div style="position:relative;width:80px;height:18px;margin-top:4px">
         <svg viewBox="0 0 80 18" width="80" height="18">
-          <line x1="0" y1="9" x2="68" y2="9" stroke="#C26A1A" stroke-width="2.5"/>
-          <polygon points="68,5 80,9 68,13" fill="#C26A1A"/>
+          <line x1="0" y1="9" x2="68" y2="9" stroke="#A31232" stroke-width="2.5"/>
+          <polygon points="68,5 80,9 68,13" fill="#A31232"/>
         </svg>
       </div>
-      <div style="font-size:10px;color:#9CA3AF;margin-top:2px">longest step</div>
+      <div style="font-size:10px;color:#A8958F;margin-top:2px">longest step</div>
     </div>
 
     <!-- Dst -->
     <div style="text-align:center">
       <div class="role r-dst pop" style="margin:0 auto">
-        <div class="ricon">🚚</div><div class="rlabel">Distributor</div>
+        <div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h4l3.5 3.3V16H13"/><circle cx="6.5" cy="17.6" r="1.9"/><circle cx="16.5" cy="17.6" r="1.9"/></svg></div><div class="rlabel">Distributor</div>
       </div>
-      <div style="font-size:12px;color:#2563EB;font-weight:700;margin-top:6px">Transit</div>
+      <div style="font-size:12px;color:#B3173A;font-weight:700;margin-top:6px">Transit</div>
     </div>
 
     <!-- Arrow Dst→Whl: 1 week -->
     <div style="display:flex;flex-direction:column;align-items:center;width:80px">
-      <div style="font-size:13px;font-weight:800;color:#C26A1A;background:#FFF0DD;border-radius:8px;padding:3px 10px;white-space:nowrap">⏱ 1 week</div>
+      <div style="font-size:13px;font-weight:800;color:#A31232;background:#FBF0E7;border-radius:8px;padding:3px 10px;white-space:nowrap">⏱ 1 week</div>
       <div style="position:relative;width:70px;height:18px;margin-top:4px">
         <svg viewBox="0 0 70 18" width="70" height="18">
-          <line x1="0" y1="9" x2="58" y2="9" stroke="#C26A1A" stroke-width="2.5"/>
-          <polygon points="58,5 70,9 58,13" fill="#C26A1A"/>
+          <line x1="0" y1="9" x2="58" y2="9" stroke="#A31232" stroke-width="2.5"/>
+          <polygon points="58,5 70,9 58,13" fill="#A31232"/>
         </svg>
       </div>
     </div>
@@ -326,18 +331,18 @@
     <!-- Whl -->
     <div style="text-align:center">
       <div class="role r-whl pop" style="margin:0 auto">
-        <div class="ricon">🏪</div><div class="rlabel">Wholesaler</div>
+        <div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/><path d="M8 20v-6h8v6M8 17h8"/></svg></div><div class="rlabel">Wholesaler</div>
       </div>
-      <div style="font-size:12px;color:#059669;font-weight:700;margin-top:6px">Storage</div>
+      <div style="font-size:12px;color:#2C6B4C;font-weight:700;margin-top:6px">Storage</div>
     </div>
 
     <!-- Arrow Whl→Ret: 1 week -->
     <div style="display:flex;flex-direction:column;align-items:center;width:80px">
-      <div style="font-size:13px;font-weight:800;color:#C26A1A;background:#FFF0DD;border-radius:8px;padding:3px 10px;white-space:nowrap">⏱ 1 week</div>
+      <div style="font-size:13px;font-weight:800;color:#A31232;background:#FBF0E7;border-radius:8px;padding:3px 10px;white-space:nowrap">⏱ 1 week</div>
       <div style="position:relative;width:70px;height:18px;margin-top:4px">
         <svg viewBox="0 0 70 18" width="70" height="18">
-          <line x1="0" y1="9" x2="58" y2="9" stroke="#C26A1A" stroke-width="2.5"/>
-          <polygon points="58,5 70,9 58,13" fill="#C26A1A"/>
+          <line x1="0" y1="9" x2="58" y2="9" stroke="#A31232" stroke-width="2.5"/>
+          <polygon points="58,5 70,9 58,13" fill="#A31232"/>
         </svg>
       </div>
     </div>
@@ -345,21 +350,21 @@
     <!-- Ret -->
     <div style="text-align:center">
       <div class="role r-rtl pop" style="margin:0 auto">
-        <div class="ricon">🛒</div><div class="rlabel">Retailer</div>
+        <div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l1.6-5h12.8L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0A2.7 2.7 0 0 0 20 9"/><path d="M5 12v8h14v-8M10 20v-5h4v5"/></svg></div><div class="rlabel">Retailer</div>
       </div>
-      <div style="font-size:12px;color:#D97706;font-weight:700;margin-top:6px">Shelf</div>
+      <div style="font-size:12px;color:#CC8A16;font-weight:700;margin-top:6px">Shelf</div>
     </div>
 
     <!-- Arrow → Customer -->
-    <div style="width:50px;height:2px;background:#D97706;margin-top:-6px;align-self:center"></div>
-    <div class="role" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);width:100px;align-self:center" id="s2-cust">
-      <div class="ricon">👤</div><div class="rlabel" style="font-size:13px">Customer</div>
+    <div style="width:50px;height:2px;background:#CC8A16;margin-top:-6px;align-self:center"></div>
+    <div class="role" style="background:linear-gradient(135deg,#F2C25E,#E6A532);width:100px;align-self:center" id="s2-cust">
+      <div class="ricon"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-4 3.2-6.5 7-6.5s7 2.5 7 6.5"/></svg></div><div class="rlabel" style="font-size:13px">Customer</div>
     </div>
   </div>
 
   <!-- Total lead time callout -->
-  <div id="s2-total" style="margin-top:28px;background:#3B1A08;color:#FFF8F0;border-radius:14px;padding:16px 36px;font-size:20px;font-weight:700;text-align:center;opacity:0;transition:opacity 0.6s ease">
-    🕐 Total material lead time from Manufacturer to Customer: <span style="color:#FBBF24">4+ weeks</span>
+  <div id="s2-total" style="margin-top:28px;background:#211415;color:#FFF9F4;border-radius:14px;padding:16px 36px;font-size:20px;font-weight:700;text-align:center;opacity:0;transition:opacity 0.6s ease">
+    🕐 Total material lead time from Manufacturer to Customer: <span style="color:#F2C25E">4+ weeks</span>
   </div>
 </div>
 
@@ -374,15 +379,15 @@
   <div class="expiry-grid" style="margin-top:22px">
     <!-- Manufacturer -->
     <div class="exp-card" id="ex0">
-      <div class="exp-title" style="background:#7C3AED">🏭 Manufacturer</div>
+      <div class="exp-title" style="background:#3F2A29"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V10l6 4v-4l6 4V4h5v17H3Z"/><path d="M7 18h2M12 18h2M17 18h.01"/></svg> Manufacturer</div>
       <div class="weeks-row" id="ex0-weeks">
-        <div class="week-box" style="color:#059669;border-color:#059669;background:#F0FDF4">
+        <div class="week-box" style="color:#2C6B4C;border-color:#2C6B4C;background:#F0F7F2">
           <div class="week-num">Wk1</div><div>Fresh</div>
         </div>
-        <div class="week-box" style="color:#D97706;border-color:#D97706;background:#FFFBEB">
+        <div class="week-box" style="color:#CC8A16;border-color:#CC8A16;background:#FFFBEB">
           <div class="week-num">Wk2</div><div>Ageing</div>
         </div>
-        <div class="week-box" style="color:#DC2626;border-color:#DC2626;background:#FEF2F2">
+        <div class="week-box" style="color:#DE3B2C;border-color:#DE3B2C;background:#FFF1EF">
           <div class="week-num">Wk3</div><div>Expiring</div>
         </div>
       </div>
@@ -390,15 +395,15 @@
     </div>
     <!-- Distributor -->
     <div class="exp-card" id="ex1">
-      <div class="exp-title" style="background:#2563EB">🚚 Distributor</div>
+      <div class="exp-title" style="background:#B3173A"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h4l3.5 3.3V16H13"/><circle cx="6.5" cy="17.6" r="1.9"/><circle cx="16.5" cy="17.6" r="1.9"/></svg> Distributor</div>
       <div class="weeks-row">
-        <div class="week-box" style="color:#059669;border-color:#059669;background:#F0FDF4">
+        <div class="week-box" style="color:#2C6B4C;border-color:#2C6B4C;background:#F0F7F2">
           <div class="week-num">Wk1</div><div>Fresh</div>
         </div>
-        <div class="week-box" style="color:#D97706;border-color:#D97706;background:#FFFBEB">
+        <div class="week-box" style="color:#CC8A16;border-color:#CC8A16;background:#FFFBEB">
           <div class="week-num">Wk2</div><div>Ageing</div>
         </div>
-        <div class="week-box" style="color:#DC2626;border-color:#DC2626;background:#FEF2F2">
+        <div class="week-box" style="color:#DE3B2C;border-color:#DE3B2C;background:#FFF1EF">
           <div class="week-num">Wk3</div><div>Expiring</div>
         </div>
       </div>
@@ -406,15 +411,15 @@
     </div>
     <!-- Wholesaler -->
     <div class="exp-card" id="ex2">
-      <div class="exp-title" style="background:#059669">🏪 Wholesaler</div>
+      <div class="exp-title" style="background:#2C6B4C"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/><path d="M8 20v-6h8v6M8 17h8"/></svg> Wholesaler</div>
       <div class="weeks-row">
-        <div class="week-box" style="color:#059669;border-color:#059669;background:#F0FDF4">
+        <div class="week-box" style="color:#2C6B4C;border-color:#2C6B4C;background:#F0F7F2">
           <div class="week-num">Wk1</div><div>Fresh</div>
         </div>
-        <div class="week-box" style="color:#D97706;border-color:#D97706;background:#FFFBEB">
+        <div class="week-box" style="color:#CC8A16;border-color:#CC8A16;background:#FFFBEB">
           <div class="week-num">Wk2</div><div>Ageing</div>
         </div>
-        <div class="week-box" style="color:#DC2626;border-color:#DC2626;background:#FEF2F2">
+        <div class="week-box" style="color:#DE3B2C;border-color:#DE3B2C;background:#FFF1EF">
           <div class="week-num">Wk3</div><div>Expiring</div>
         </div>
       </div>
@@ -422,15 +427,15 @@
     </div>
     <!-- Retailer -->
     <div class="exp-card" id="ex3">
-      <div class="exp-title" style="background:#D97706">🛒 Retailer</div>
+      <div class="exp-title" style="background:#CC8A16"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l1.6-5h12.8L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0A2.7 2.7 0 0 0 20 9"/><path d="M5 12v8h14v-8M10 20v-5h4v5"/></svg> Retailer</div>
       <div class="weeks-row">
-        <div class="week-box" style="color:#059669;border-color:#059669;background:#F0FDF4">
+        <div class="week-box" style="color:#2C6B4C;border-color:#2C6B4C;background:#F0F7F2">
           <div class="week-num">Wk1</div><div>Fresh</div>
         </div>
-        <div class="week-box" style="color:#D97706;border-color:#D97706;background:#FFFBEB">
+        <div class="week-box" style="color:#CC8A16;border-color:#CC8A16;background:#FFFBEB">
           <div class="week-num">Wk2</div><div>Ageing</div>
         </div>
-        <div class="week-box" style="color:#DC2626;border-color:#DC2626;background:#FEF2F2">
+        <div class="week-box" style="color:#DE3B2C;border-color:#DE3B2C;background:#FFF1EF">
           <div class="week-num">Wk3</div><div>Expiring</div>
         </div>
       </div>
@@ -439,7 +444,7 @@
   </div>
 
   <div id="s3-warn" style="margin-top:20px;text-align:center;opacity:0;transition:opacity 0.6s ease">
-    <span style="font-size:20px;font-weight:700;color:#DC2626">
+    <span style="font-size:20px;font-weight:700;color:#DE3B2C">
       ⚠️ Each stage independently expires stock — wastage cost hits every player who over-orders.
     </span>
   </div>
@@ -455,80 +460,80 @@
 
   <!-- Material flow row -->
   <div class="lag-panel" id="lag1" style="margin-top:18px">
-    <div style="font-size:13px;font-weight:800;color:#C26A1A;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">
-      🎂 Material Flow &nbsp;(Cakes move downstream →)
+    <div style="font-size:13px;font-weight:800;color:#A31232;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">
+      Material Flow &nbsp;(Cakes move downstream →)
     </div>
     <div class="lag-chain">
-      <div class="lag-node" style="background:#7C3AED">🏭 Mfg</div>
+      <div class="lag-node" style="background:#3F2A29"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V10l6 4v-4l6 4V4h5v17H3Z"/><path d="M7 18h2M12 18h2M17 18h.01"/></svg> Mfg</div>
       <div class="lag-arr">
-        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#C26A1A" stroke-width="2.5"/><polygon points="68,4 80,8 68,12" fill="#C26A1A"/></svg>
+        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#A31232" stroke-width="2.5"/><polygon points="68,4 80,8 68,12" fill="#A31232"/></svg>
         <div class="delay amber">+2 weeks</div>
       </div>
-      <div class="lag-node" style="background:#2563EB">🚚 Dst</div>
+      <div class="lag-node" style="background:#B3173A"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h4l3.5 3.3V16H13"/><circle cx="6.5" cy="17.6" r="1.9"/><circle cx="16.5" cy="17.6" r="1.9"/></svg> Dst</div>
       <div class="lag-arr">
-        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#C26A1A" stroke-width="2.5"/><polygon points="68,4 80,8 68,12" fill="#C26A1A"/></svg>
+        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#A31232" stroke-width="2.5"/><polygon points="68,4 80,8 68,12" fill="#A31232"/></svg>
         <div class="delay amber">+1 week</div>
       </div>
-      <div class="lag-node" style="background:#059669">🏪 Whl</div>
+      <div class="lag-node" style="background:#2C6B4C"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/><path d="M8 20v-6h8v6M8 17h8"/></svg> Whl</div>
       <div class="lag-arr">
-        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#C26A1A" stroke-width="2.5"/><polygon points="68,4 80,8 68,12" fill="#C26A1A"/></svg>
+        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#A31232" stroke-width="2.5"/><polygon points="68,4 80,8 68,12" fill="#A31232"/></svg>
         <div class="delay amber">+1 week</div>
       </div>
-      <div class="lag-node" style="background:#D97706">🛒 Ret</div>
+      <div class="lag-node" style="background:#CC8A16"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l1.6-5h12.8L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0A2.7 2.7 0 0 0 20 9"/><path d="M5 12v8h14v-8M10 20v-5h4v5"/></svg> Ret</div>
       <div class="lag-arr">
-        <svg width="70" height="16" viewBox="0 0 70 16"><line x1="0" y1="8" x2="58" y2="8" stroke="#D97706" stroke-width="2"/><polygon points="58,4 70,8 58,12" fill="#D97706"/></svg>
-        <div class="delay" style="color:#D97706">instant</div>
+        <svg width="70" height="16" viewBox="0 0 70 16"><line x1="0" y1="8" x2="58" y2="8" stroke="#CC8A16" stroke-width="2"/><polygon points="58,4 70,8 58,12" fill="#CC8A16"/></svg>
+        <div class="delay" style="color:#CC8A16">instant</div>
       </div>
-      <div class="lag-node" style="background:#FBBF24;width:90px">👤 Cust</div>
+      <div class="lag-node" style="background:#F2C25E;width:90px"><svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-4 3.2-6.5 7-6.5s7 2.5 7 6.5"/></svg> Cust</div>
     </div>
   </div>
 
   <!-- Information flow row -->
   <div class="lag-panel" id="lag2" style="margin-top:14px">
-    <div style="font-size:13px;font-weight:800;color:#7C3AED;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">
+    <div style="font-size:13px;font-weight:800;color:#3F2A29;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">
       📋 Order / Demand Signal &nbsp;(flows upstream ← each round, accumulates delay)
     </div>
     <div class="lag-chain">
-      <div class="lag-node" style="background:#7C3AED;position:relative">
-        🏭 Mfg
-        <div class="stale-badge" style="background:#FEE2E2;color:#DC2626;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">sees demand 3+ wks later</div>
+      <div class="lag-node" style="background:#3F2A29;position:relative">
+        <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V10l6 4v-4l6 4V4h5v17H3Z"/><path d="M7 18h2M12 18h2M17 18h.01"/></svg> Mfg
+        <div class="stale-badge" style="background:#FFDFDB;color:#DE3B2C;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">sees demand 3+ wks later</div>
       </div>
       <div class="lag-arr" style="flex-direction:row-reverse;transform:scaleX(-1)">
-        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#7C3AED" stroke-width="2" stroke-dasharray="6 4"/><polygon points="68,4 80,8 68,12" fill="#7C3AED"/></svg>
+        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#3F2A29" stroke-width="2" stroke-dasharray="6 4"/><polygon points="68,4 80,8 68,12" fill="#3F2A29"/></svg>
         <div class="delay purple" style="transform:scaleX(-1)">+1 wk</div>
       </div>
-      <div class="lag-node" style="background:#2563EB;position:relative">
-        🚚 Dst
-        <div class="stale-badge" style="background:#EDE9FE;color:#7C3AED;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">2 wks behind</div>
+      <div class="lag-node" style="background:#B3173A;position:relative">
+        <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h4l3.5 3.3V16H13"/><circle cx="6.5" cy="17.6" r="1.9"/><circle cx="16.5" cy="17.6" r="1.9"/></svg> Dst
+        <div class="stale-badge" style="background:#F3ECE9;color:#3F2A29;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">2 wks behind</div>
       </div>
       <div class="lag-arr" style="flex-direction:row-reverse;transform:scaleX(-1)">
-        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#7C3AED" stroke-width="2" stroke-dasharray="6 4"/><polygon points="68,4 80,8 68,12" fill="#7C3AED"/></svg>
+        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#3F2A29" stroke-width="2" stroke-dasharray="6 4"/><polygon points="68,4 80,8 68,12" fill="#3F2A29"/></svg>
         <div class="delay purple" style="transform:scaleX(-1)">+1 wk</div>
       </div>
-      <div class="lag-node" style="background:#059669;position:relative">
-        🏪 Whl
-        <div class="stale-badge" style="background:#D1FAE5;color:#059669;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">1 wk behind</div>
+      <div class="lag-node" style="background:#2C6B4C;position:relative">
+        <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-6 9 6v10H3z"/><path d="M8 20v-6h8v6M8 17h8"/></svg> Whl
+        <div class="stale-badge" style="background:#DCEDE2;color:#2C6B4C;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">1 wk behind</div>
       </div>
       <div class="lag-arr" style="flex-direction:row-reverse;transform:scaleX(-1)">
-        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#7C3AED" stroke-width="2" stroke-dasharray="6 4"/><polygon points="68,4 80,8 68,12" fill="#7C3AED"/></svg>
+        <svg width="80" height="16" viewBox="0 0 80 16"><line x1="0" y1="8" x2="68" y2="8" stroke="#3F2A29" stroke-width="2" stroke-dasharray="6 4"/><polygon points="68,4 80,8 68,12" fill="#3F2A29"/></svg>
         <div class="delay purple" style="transform:scaleX(-1)">+1 wk</div>
       </div>
-      <div class="lag-node" style="background:#D97706;position:relative">
-        🛒 Ret
-        <div class="stale-badge" style="background:#FEF3C7;color:#D97706;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">sees NOW</div>
+      <div class="lag-node" style="background:#CC8A16;position:relative">
+        <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l1.6-5h12.8L20 9"/><path d="M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0A2.7 2.7 0 0 0 20 9"/><path d="M5 12v8h14v-8M10 20v-5h4v5"/></svg> Ret
+        <div class="stale-badge" style="background:#FEF3C7;color:#CC8A16;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">sees NOW</div>
       </div>
       <div class="lag-arr" style="flex-direction:row-reverse;transform:scaleX(-1)">
-        <svg width="70" height="16" viewBox="0 0 70 16"><line x1="0" y1="8" x2="58" y2="8" stroke="#D97706" stroke-width="1.5" stroke-dasharray="4 3"/><polygon points="58,4 70,8 58,12" fill="#D97706"/></svg>
-        <div class="delay" style="color:#D97706;transform:scaleX(-1)">instant</div>
+        <svg width="70" height="16" viewBox="0 0 70 16"><line x1="0" y1="8" x2="58" y2="8" stroke="#CC8A16" stroke-width="1.5" stroke-dasharray="4 3"/><polygon points="58,4 70,8 58,12" fill="#CC8A16"/></svg>
+        <div class="delay" style="color:#CC8A16;transform:scaleX(-1)">instant</div>
       </div>
-      <div class="lag-node" style="background:#FBBF24;width:90px;position:relative">
-        👤 Cust
-        <div class="stale-badge" style="background:#FEF9C3;color:#92400E;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">buys NOW</div>
+      <div class="lag-node" style="background:#F2C25E;width:90px;position:relative">
+        <svg class="ri" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-4 3.2-6.5 7-6.5s7 2.5 7 6.5"/></svg> Cust
+        <div class="stale-badge" style="background:#FEF9C3;color:#85540F;position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);white-space:nowrap">buys NOW</div>
       </div>
     </div>
   </div>
 
-  <div id="s4-key" style="margin-top:38px;text-align:center;opacity:0;transition:opacity 0.7s ease;font-size:19px;font-weight:700;color:#3B1A08;line-height:1.5">
+  <div id="s4-key" style="margin-top:38px;text-align:center;opacity:0;transition:opacity 0.7s ease;font-size:19px;font-weight:700;color:#211415;line-height:1.5">
     The Manufacturer is making decisions based on <span class="red">old, distorted information</span>.<br>
     This causes the classic <span class="amber">Bullwhip Effect</span> — small demand changes create huge swings upstream.
   </div>
@@ -542,29 +547,29 @@
   <p class="sub">You must balance three competing costs — every single round.</p>
 
   <div class="cost-row">
-    <div class="cost-card" id="cc0" style="border-top-color:#DC2626">
+    <div class="cost-card" id="cc0" style="border-top-color:#DE3B2C">
       <div class="cost-icon">📉</div>
       <div class="cost-label">Lost Sales</div>
-      <div class="cost-val" style="color:#DC2626">$4 / unit</div>
+      <div class="cost-val" style="color:#DE3B2C">$4 / unit</div>
       <div class="cost-desc">Order <strong>too little</strong> → you run out → customer walks away → lost sale</div>
     </div>
-    <div class="cost-card" id="cc1" style="border-top-color:#D97706">
+    <div class="cost-card" id="cc1" style="border-top-color:#CC8A16">
       <div class="cost-icon">🗑️</div>
       <div class="cost-label">Wastage</div>
-      <div class="cost-val" style="color:#D97706">$2 / unit</div>
+      <div class="cost-val" style="color:#CC8A16">$2 / unit</div>
       <div class="cost-desc">Order <strong>too much</strong> → stock ages past 3 weeks → thrown away</div>
     </div>
-    <div class="cost-card" id="cc2" style="border-top-color:#059669">
+    <div class="cost-card" id="cc2" style="border-top-color:#2C6B4C">
       <div class="cost-icon">📦</div>
       <div class="cost-label">Holding</div>
-      <div class="cost-val" style="color:#059669">$0.50 / wk</div>
+      <div class="cost-val" style="color:#2C6B4C">$0.50 / wk</div>
       <div class="cost-desc">Any unsold inventory sitting in your stage costs money every round</div>
     </div>
   </div>
 
-  <div id="s5-foot" style="margin-top:28px;opacity:0;transition:opacity 0.6s ease;text-align:center;font-size:20px;font-weight:700;color:#3B1A08">
+  <div id="s5-foot" style="margin-top:28px;opacity:0;transition:opacity 0.6s ease;text-align:center;font-size:20px;font-weight:700;color:#211415">
     You only see <span class="amber">your own stage's inventory</span> — not your teammates'.<br>
-    <span style="color:#DC2626">Can you coordinate without full visibility?</span>
+    <span style="color:#DE3B2C">Can you coordinate without full visibility?</span>
   </div>
 </div>
 
@@ -573,7 +578,7 @@
 <!-- ══════════════════════════════════════════════════════════════════ -->
 <div class="slide" id="s6">
   <div class="title-wrap">
-    <div style="font-size:72px;margin-bottom:8px">🎂</div>
+    <div style="margin-bottom:8px"><svg class="mark" style="width:104px;height:104px" viewBox="0 0 64 64" aria-hidden="true"><rect x="5" y="55" width="54" height="4" rx="2" fill="#170D0E"/><rect x="9" y="43" width="46" height="12" rx="3" fill="#2E1D1D"/><rect x="9" y="39" width="46" height="4.5" fill="#FBF0E7"/><rect x="9" y="27" width="46" height="12" fill="#B3173A"/><rect x="7" y="19" width="50" height="11" rx="5.5" fill="#FBF0E7"/><rect x="15" y="26" width="6" height="12" rx="3" fill="#FBF0E7"/><rect x="29" y="26" width="6" height="8.5" rx="3" fill="#FBF0E7"/><rect x="43" y="26" width="6" height="14" rx="3" fill="#FBF0E7"/><circle cx="32" cy="13.5" r="6.5" fill="#D61F3E"/><circle cx="29.7" cy="11.2" r="1.8" fill="#fff" opacity=".55"/><path d="M32 7.2C33 3.4 36.6 1.6 40.4 2.4" stroke="#2C6B4C" stroke-width="1.9" fill="none" stroke-linecap="round"/></svg></div>
     <h1>THE CAKE GAME</h1>
     <div class="tagline">Supply chain. Lead times. Expiry. Bullwhip. Can your team win?</div>
     <div class="pill-row">
@@ -665,8 +670,8 @@ function pulseExpiry() {
 const style = document.createElement('style');
 style.textContent = `
   @keyframes pulse-red {
-    0%,100% { background:#FEF2F2; transform:scale(1); }
-    50% { background:#FCA5A5; transform:scale(1.08); }
+    0%,100% { background:#FFF1EF; transform:scale(1); }
+    50% { background:#FF9488; transform:scale(1.08); }
   }
 `;
 document.head.appendChild(style);

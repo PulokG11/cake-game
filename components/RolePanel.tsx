@@ -5,6 +5,7 @@ import { Card } from './ui/Card';
 import { Badge } from './ui/Badge';
 import { InventoryBuckets } from './InventoryBuckets';
 import { WastageAlert } from './WastageAlert';
+import { RoleIcon } from './brand/Brand';
 
 interface RolePanelProps {
   role: Role;
@@ -16,9 +17,14 @@ interface RolePanelProps {
 
 export function RolePanel({ role, rs, config, currentRound, isOwnRole }: RolePanelProps) {
   return (
-    <Card className={isOwnRole ? 'ring-2 ring-cake-400' : ''}>
+    <Card className={isOwnRole ? 'ring-2 ring-cake-300' : ''}>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold text-gray-800">{ROLE_LABELS[role]}</h3>
+        <h3 className="flex items-center gap-2.5 font-display text-lg font-bold text-forest-800">
+          <span className="grid place-items-center h-9 w-9 rounded-xl bg-cake-50 text-cake-600 border border-cake-100">
+            <RoleIcon role={role} size={20} />
+          </span>
+          {ROLE_LABELS[role]}
+        </h3>
         {isOwnRole && <Badge variant="info">You</Badge>}
       </div>
 
@@ -80,12 +86,12 @@ function Stat({
   const color =
     highlight === 'danger' ? 'text-red-600' :
     highlight === 'warn'   ? 'text-amber-600' :
-    'text-gray-800';
+    'text-forest-800';
 
   return (
-    <div className="bg-gray-50 rounded-lg p-2 text-center">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className={`text-lg font-bold ${color}`}>{value}</p>
+    <div className="bg-cream-100 rounded-xl p-2 text-center">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">{label}</p>
+      <p className={`font-display text-xl font-bold tabular ${color}`}>{value}</p>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { Game, ROLE_LABELS, ROLE_DESCRIPTIONS, ROLE_TAGS, Role } from '@/lib/typ
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { TutorialModal } from '@/components/TutorialModal';
+import { RoleIcon } from '@/components/brand/Brand';
 
 function AssignedContent() {
   const params = useSearchParams();
@@ -37,8 +38,12 @@ function AssignedContent() {
       {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
       <div className="max-w-lg mx-auto mt-12 space-y-6">
       <div className="text-center">
-        <div className="text-5xl mb-3">🎭</div>
-        <h2 className="text-2xl font-bold text-cake-700">You&apos;re in!</h2>
+        {role && (
+          <span className="mx-auto mb-3 grid place-items-center h-16 w-16 rounded-2xl bg-forest-900 text-cake-300 shadow-lift">
+            <RoleIcon role={role} size={34} />
+          </span>
+        )}
+        <h2 className="text-4xl font-extrabold text-forest-800">You&apos;re in!</h2>
         <p className="text-gray-500">Waiting for the facilitator to start the game.</p>
         {!showTutorial && (
           <button
@@ -52,7 +57,7 @@ function AssignedContent() {
 
       <Card className="text-center">
         <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Your team</p>
-        <p className="text-xl font-bold text-gray-800">{team}</p>
+        <p className="font-display text-2xl font-bold text-forest-800">{team}</p>
         <div className="mt-3 inline-block">
           <Badge variant="info">{ROLE_LABELS[role]}</Badge>
         </div>

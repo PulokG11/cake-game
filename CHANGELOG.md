@@ -4,6 +4,30 @@ Every release is a git tag. Roll back a file with
 `git checkout <tag> -- <path>` then commit; roll back everything with `git revert`
 of the release commit. Finding IDs (F-xx) refer to PRD v2 §9.4.
 
+## v0.3.0 — Red Velvet & Black Forest redesign
+
+Visual redesign only; no game rules, data or routes changed.
+
+- **Palette:** red velvet crimson (primary), black-forest chocolate (header, round banner,
+  scoreboard), cream-cheese frosting (backgrounds). Defined once in `tailwind.config.ts`:
+  `cake` = velvet, `forest` = chocolate, `cream` = frosting. The stock `gray`, `green`,
+  `amber`, `red` and `blue` scales are re-mapped (warm mocha, forest green, caramel gold,
+  cherry scarlet, berry plum) so existing utility classes re-theme without per-file edits.
+- **Type:** Playfair Display for headings and big numbers (lining numerals), DM Sans for
+  body text, both self-hosted via `next/font`.
+- **Brand:** new SVG logo mark + wordmark, favicon (`app/icon.svg`), three-tier cake hero
+  illustration, chocolate-drip header edge, themed line icons per role replacing emoji
+  (`components/brand/Brand.tsx`).
+- **Screens:** home (hero, role chips, cost tiles), lobby, ordering (dark round banner),
+  round summary, results (dark scoreboard card), admin overview and game views, admin login.
+- **Charts:** role colours moved to `lib/theme.ts` (chocolate / velvet / forest green / gold).
+- **Tutorial:** `public/tutorial.html` re-coloured, new fonts, emoji logo and role icons
+  replaced with the same SVGs; closing-slide tagline contrast fixed.
+- **Contrast:** the two lightest neutral text colours were darkened for readability.
+
+**Rollback:** `git checkout v0.2.0 -- app components lib/theme.ts public/tutorial.html tailwind.config.ts`
+(then delete `components/brand/` and `app/icon.svg`), or `git revert` the v0.3.0 commit.
+
 ## v0.2.0 — GitHub Pages deployment
 
 Live at https://pulokg11.github.io/cake-game/ (deployed by `.github/workflows/pages.yml`

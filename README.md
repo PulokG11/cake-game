@@ -39,7 +39,7 @@ The Product Guide in this folder covers facilitation, troubleshooting and refere
 
 ## Tech stack
 
-Next.js 15 (static export), React 19, Tailwind CSS, TypeScript, Supabase (Postgres + Realtime), hosted on GitHub Pages. The rules engine in `lib/gameLogic.ts` is a pure function covered by tests.
+Next.js 15 (static export), React 19, Tailwind CSS, TypeScript, Supabase (Postgres + Realtime), hosted on GitHub Pages. The look is a red velvet / black forest theme (Playfair Display + DM Sans, inline SVG logo and illustrations); its palette lives in `tailwind.config.ts` and `lib/theme.ts`. The rules engine in `lib/gameLogic.ts` is a pure function covered by tests.
 
 ## Run locally
 
@@ -64,7 +64,7 @@ Pushing to `main` runs `.github/workflows/pages.yml`: install, test, build a sta
 
 ```
 app/            Pages: join (/), lobby (/assigned), game (/game?id=), admin (/admin, /admin/game?id=)
-components/     Role panel, inventory age buckets, weekly summary, results, tutorial
+components/     Role panel, inventory age buckets, weekly summary, results, tutorial, brand (logo, illustrations, role icons)
 lib/            Game rules (gameLogic.ts), types, Supabase client and helpers
 public/         Animated tutorial (tutorial.html)
 supabase/       Database schema and the atomic join function
@@ -80,6 +80,7 @@ Every release is a git tag; see [CHANGELOG.md](CHANGELOG.md) for what changed an
 | `v0-baseline` | Untouched upstream code |
 | `v0.1.0` | Fixes for missing-order handling (F-03) and demand-schedule parsing (F-05) |
 | `v0.2.0` | GitHub Pages deployment |
+| `v0.3.0` | Red velvet / black forest redesign |
 
 ## Known limitations
 

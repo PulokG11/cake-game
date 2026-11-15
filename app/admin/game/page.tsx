@@ -11,15 +11,7 @@ import { GameResults } from '@/components/GameResults';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
-
-// ─── Colour palette per role ──────────────────────────────────────────────────
-
-const ROLE_COLORS: Record<Role, string> = {
-  manufacturer: '#7C3AED',
-  distributor:  '#2563EB',
-  wholesaler:   '#059669',
-  retailer:     '#D97706',
-};
+import { ROLE_COLORS, CHART } from '@/lib/theme';
 
 // ─── SVG line chart ───────────────────────────────────────────────────────────
 
@@ -65,19 +57,19 @@ function LineChart({
           <g key={i}>
             <line
               x1={pl} y1={yOf(tick)} x2={pl + chartW} y2={yOf(tick)}
-              stroke="#f0f0f0" strokeWidth="1"
+              stroke={CHART.grid} strokeWidth="1"
             />
-            <text x={pl - 4} y={yOf(tick) + 3} textAnchor="end" fontSize="9" fill="#aaa">
+            <text x={pl - 4} y={yOf(tick) + 3} textAnchor="end" fontSize="9" fill={CHART.tick}>
               {tick}
             </text>
           </g>
         ))}
         {/* Axes */}
-        <line x1={pl} y1={pt} x2={pl} y2={pt + chartH} stroke="#e5e7eb" strokeWidth="1" />
-        <line x1={pl} y1={pt + chartH} x2={pl + chartW} y2={pt + chartH} stroke="#e5e7eb" strokeWidth="1" />
+        <line x1={pl} y1={pt} x2={pl} y2={pt + chartH} stroke={CHART.axis} strokeWidth="1" />
+        <line x1={pl} y1={pt + chartH} x2={pl + chartW} y2={pt + chartH} stroke={CHART.axis} strokeWidth="1" />
         {/* X labels */}
         {xTicks.map(i => (
-          <text key={i} x={xOf(i)} y={pt + chartH + 13} textAnchor="middle" fontSize="9" fill="#aaa">
+          <text key={i} x={xOf(i)} y={pt + chartH + 13} textAnchor="middle" fontSize="9" fill={CHART.tick}>
             W{i + 1}
           </text>
         ))}
@@ -112,7 +104,7 @@ function LineChart({
         {ROLES.map((role, i) => (
           <g key={role} transform={`translate(${pl + i * 115}, ${H - 14})`}>
             <line x1="0" y1="0" x2="14" y2="0" stroke={ROLE_COLORS[role]} strokeWidth="2" />
-            <text x="17" y="4" fontSize="9" fill="#555">{ROLE_LABELS[role]}</text>
+            <text x="17" y="4" fontSize="9" fill={CHART.label}>{ROLE_LABELS[role]}</text>
           </g>
         ))}
       </svg>

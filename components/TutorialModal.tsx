@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import { CakeMark } from './brand/Brand';
 
 interface TutorialModalProps {
   onClose: () => void;
@@ -30,17 +31,17 @@ export function TutorialModal({ onClose }: TutorialModalProps) {
       onClick={e => { if (e.target === overlayRef.current) onClose(); }}
     >
       {/* Header bar */}
-      <div className="flex items-center justify-between px-3 py-2 sm:px-5 sm:py-3 bg-[#3B1A08] shrink-0">
+      <div className="flex items-center justify-between px-3 py-2 sm:px-5 sm:py-3 bg-forest-900 border-b-2 border-cake-600 shrink-0">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🎂</span>
-          <span className="text-[#FFF8F0] font-bold text-xs sm:text-sm tracking-wide">
+          <CakeMark size={26} />
+          <span className="text-cream-50 font-bold text-xs sm:text-sm tracking-wide">
             <span className="sm:hidden">How to Play</span>
             <span className="hidden sm:inline">THE CAKE GAME — How to Play (62s)</span>
           </span>
         </div>
         <button
           onClick={onClose}
-          className="text-[#C26A1A] hover:text-[#FFF8F0] font-bold text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg border border-[#C26A1A] hover:bg-[#C26A1A] transition-colors whitespace-nowrap"
+          className="text-cake-200 hover:text-white font-bold text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg border border-cake-400 hover:bg-cake-600 transition-colors whitespace-nowrap"
         >
           <span className="sm:hidden">Got it ✓</span>
           <span className="hidden sm:inline">Got it, I'm ready ✓</span>

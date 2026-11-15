@@ -17,19 +17,19 @@ export function WeeklySummary({ state, config, myRole }: WeeklySummaryProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold text-gray-800">
+      <h2 className="text-2xl font-extrabold text-forest-800">
         Round {round} Summary
         {myRole && (
-          <span className="ml-2 text-sm font-normal text-cake-600">
+          <span className="ml-2 font-sans text-sm font-semibold text-cake-600">
             — {ROLE_LABELS[myRole]}
           </span>
         )}
       </h2>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm border-collapse">
+        <table className="w-full text-sm border-collapse tabular bg-white rounded-xl overflow-hidden shadow-card">
           <thead>
-            <tr className="bg-cake-50">
+            <tr className="bg-cream-100">
               {!myRole && <th className="text-left p-2 font-semibold text-cake-700">Role</th>}
               <th className="text-right p-2 font-semibold text-gray-600">Demand</th>
               <th className="text-right p-2 font-semibold text-gray-600">Received</th>
@@ -70,7 +70,7 @@ export function WeeklySummary({ state, config, myRole }: WeeklySummaryProps) {
         const rs = state.roles[myRole];
         if (!rs) return null;
         return (
-          <Card className="bg-gray-50">
+          <Card className="bg-cream-100">
             <p className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
               Your cost breakdown — Round {round}
             </p>
@@ -94,7 +94,7 @@ export function WeeklySummary({ state, config, myRole }: WeeklySummaryProps) {
             </div>
             <div className="mt-2 pt-2 border-t border-gray-200 text-center">
               <p className="text-xs text-gray-500">Your cumulative total</p>
-              <p className="text-xl font-bold text-cake-700">${rs.totalCost.toFixed(2)}</p>
+              <p className="font-display text-3xl font-extrabold text-cake-700">${rs.totalCost.toFixed(2)}</p>
             </div>
           </Card>
         );
@@ -102,7 +102,7 @@ export function WeeklySummary({ state, config, myRole }: WeeklySummaryProps) {
 
       {/* Team totals — admin view only */}
       {!myRole && (
-        <Card className="bg-cake-50">
+        <Card className="bg-cream-100">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-3">
             {ROLES.map(role => {
               const rs = state.roles[role];
@@ -118,7 +118,7 @@ export function WeeklySummary({ state, config, myRole }: WeeklySummaryProps) {
           </div>
           <div className="border-t border-cake-200 pt-3 text-center">
             <p className="text-xs text-gray-500">Cumulative team cost</p>
-            <p className="text-2xl font-bold text-cake-700">
+            <p className="font-display text-3xl font-extrabold text-cake-700">
               ${ROLES.reduce((s, r) => s + (state.roles[r]?.totalCost ?? 0), 0).toFixed(2)}
             </p>
           </div>

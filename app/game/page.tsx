@@ -13,6 +13,7 @@ import { TutorialModal } from '@/components/TutorialModal';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { CakeMark, RoleIcon } from '@/components/brand/Brand';
 
 // How long the summary screen is shown before auto-advancing to next round (seconds)
 const SUMMARY_HOLD_SECONDS = 12;
@@ -225,7 +226,7 @@ function GameContent() {
   if (!game) {
     return (
       <div className="text-center mt-20 text-gray-400">
-        <div className="text-4xl mb-3">⏳</div>
+        <CakeMark size={44} className="mx-auto mb-3 animate-pulse" />
         <p>Loading game...</p>
       </div>
     );
@@ -300,32 +301,35 @@ function GameContent() {
       )}
 
       {/* ── Prominent round banner ── */}
-      <div className="bg-cake-600 text-white rounded-2xl px-6 py-4 flex items-center justify-between shadow">
+      <div className="bg-forest-900 text-cream-50 rounded-2xl px-6 py-4 flex items-center justify-between shadow-lift border-b-4 border-cake-600">
         <div>
-          <p className="text-xs opacity-75 uppercase tracking-wide">Current Round</p>
-          <p className="text-3xl font-extrabold leading-none">
+          <p className="text-[11px] text-cake-300 uppercase tracking-[0.18em] font-semibold">Current Round</p>
+          <p className="font-display text-4xl font-black leading-none tabular mt-1">
             {state.currentRound + 1}
-            <span className="text-base font-normal opacity-60"> / {config.totalRounds}</span>
+            <span className="font-sans text-base font-normal opacity-60"> / {config.totalRounds}</span>
           </p>
           {teamName && (
-            <p className="text-xs opacity-70 mt-0.5">🏆 {teamName}</p>
+            <p className="text-xs text-cream-300/80 mt-1">{teamName}</p>
           )}
         </div>
         {myRole && (
           <div className="text-right">
-            <p className="text-xs opacity-75">Your Role</p>
-            <p className="text-lg font-bold">{ROLE_LABELS[myRole]}</p>
+            <p className="text-[11px] text-cake-300 uppercase tracking-[0.18em] font-semibold">Your Role</p>
+            <p className="flex items-center justify-end gap-2 font-display text-xl font-bold mt-1">
+              <RoleIcon role={myRole} size={20} className="text-cake-300" />
+              {ROLE_LABELS[myRole]}
+            </p>
           </div>
         )}
         {/* Timer */}
         {!submitted && (
           <div className="text-right">
-            <p className="text-xs opacity-75">{state.paused ? 'Timer frozen' : 'Auto-submit in'}</p>
-            <p className={`text-3xl font-extrabold leading-none ${
+            <p className="text-[11px] text-cake-300 uppercase tracking-[0.18em] font-semibold">{state.paused ? 'Timer frozen' : 'Auto-submit in'}</p>
+            <p className={`font-display text-4xl font-black leading-none tabular ${
               state.paused ? 'text-amber-300' :
               timeLeft <= 10 ? 'text-red-300 animate-pulse' :
               timeLeft <= 20 ? 'text-amber-300' :
-              'text-white'
+              'text-cream-50'
             }`}>
               {state.paused ? '⏸' : `${timeLeft}s`}
             </p>
@@ -374,8 +378,8 @@ function GameContent() {
 
       {/* Order input */}
       {myRole && myRs && !submitted && (
-        <Card className="border-cake-300 bg-cake-50">
-          <h3 className="font-semibold text-cake-700 mb-1">
+        <Card className="!border-cake-200 !bg-cake-50 shadow-lift">
+          <h3 className="font-display text-xl font-bold text-cake-700 mb-1">
             Place your order — {ROLE_LABELS[myRole]}
           </h3>
           <p className="text-xs text-gray-500 mb-3">
@@ -395,7 +399,7 @@ function GameContent() {
                 orderTouchedRef.current = true;
                 setOrderStr(v);
               }}
-              className="w-28 border border-cake-300 rounded-lg px-3 py-2 text-lg font-bold text-center focus:outline-none focus:ring-2 focus:ring-cake-400"
+              className="w-28 border border-cake-200 bg-white rounded-xl px-3 py-2 font-display text-2xl font-bold text-center text-forest-800 focus:outline-none focus:ring-2 focus:ring-cake-300"
             />
             <span className="text-sm text-gray-500">units to order from upstream</span>
             <Button onClick={handleSubmitOrder} disabled={submitting} className="ml-auto">
@@ -480,18 +484,18 @@ function SummaryView({
   return (
     <div className="space-y-6">
       {/* Round banner */}
-      <div className="bg-cake-600 text-white rounded-2xl px-6 py-3 flex items-center justify-between">
+      <div className="bg-cake-600 text-white rounded-2xl px-6 py-4 flex items-center justify-between shadow-lift">
         <div>
-          <p className="text-xs opacity-75 uppercase tracking-wide">Round Completed</p>
-          <p className="text-2xl font-extrabold">
+          <p className="text-[11px] text-cake-100 uppercase tracking-[0.18em] font-semibold">Round Completed</p>
+          <p className="font-display text-3xl font-black tabular mt-0.5">
             {game.state.currentRound}
-            <span className="text-sm font-normal opacity-60"> / {game.config.totalRounds}</span>
+            <span className="font-sans text-sm font-normal opacity-70"> / {game.config.totalRounds}</span>
           </p>
         </div>
         {!isLastRound && (
           <div className="text-right">
-            <p className="text-xs opacity-75">Next round in</p>
-            <p className={`text-3xl font-extrabold ${countdown <= 5 ? 'animate-pulse' : ''}`}>
+            <p className="text-[11px] text-cake-100 uppercase tracking-[0.18em] font-semibold">Next round in</p>
+            <p className={`font-display text-4xl font-black tabular ${countdown <= 5 ? 'animate-pulse' : ''}`}>
               {countdown}s
             </p>
           </div>
