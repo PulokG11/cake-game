@@ -13,6 +13,7 @@ import {
   advanceFromSummary,
 } from '@/lib/supabase';
 import { Game, GameConfig, ROLES, ROLE_LABELS, SessionSettings, Role, DEFAULT_CONFIG } from '@/lib/types';
+import { parseDemandSchedule } from '@/lib/gameLogic';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
@@ -38,6 +39,8 @@ function ConfigEditor({
   const [scheduleStr, setScheduleStr]   = useState(current.demandSchedule.join(', '));
   const [timerSecs, setTimerSecs]       = useState(String(current.orderTimerSeconds ?? 30));
 
+  const parsedSchedule = parseDemandSchedule(scheduleStr);
+
   useEffect(() => {
     setTotalRounds(String(current.totalRounds));
     setExpiryWeeks(String(current.expiryWeeks));
@@ -49,10 +52,6 @@ function ConfigEditor({
     setTimerSecs(String(current.orderTimerSeconds ?? 30));
   }, [current]);
 
-  function parseSchedule(raw: string): number[] {
-    return raw.split(/[,\s]+/).map(s => Math.max(0, parseInt(s) || 0)).filter((_, i, arr) => arr.length > 0);
-  }
-
   function buildPreview(schedule: number[], rounds: number): string {
     const preview: number[] = [];
     for (let i = 1; i <= Math.min(rounds, 6); i++) {
@@ -63,8 +62,8 @@ function ConfigEditor({
   }
 
   async function handleSave() {
-    const schedule = parseSchedule(scheduleStr);
-    if (schedule.length === 0) return alert('Enter at least one demand value.');
+    if (parsedSchedule.error) return alert(parsedSchedule.error);
+    const schedule = parsedSchedule.values;
     const cfg: GameConfig = {
       totalRounds:           Math.max(1, parseInt(totalRounds) || DEFAULT_CONFIG.totalRounds),
       expiryWeeks:           Math.max(1, parseInt(expiryWeeks) || DEFAULT_CONFIG.expiryWeeks),
@@ -85,7 +84,6 @@ function ConfigEditor({
     }
   }
 
-  const schedule = parseSchedule(scheduleStr);
   const rounds   = Math.max(1, parseInt(totalRounds) || 20);
 
   return (
@@ -181,15 +179,17 @@ function ConfigEditor({
               placeholder="e.g. 4, 4, 8, 12, 16, 20, 20, 20"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-cake-400 resize-none"
             />
-            {schedule.length > 0 && (
+            {parsedSchedule.error ? (
+              <p className="text-xs text-red-600">{parsedSchedule.error}</p>
+            ) : (
               <p className="text-xs text-gray-400">
-                Preview: {buildPreview(schedule, rounds)}
+                Preview: {buildPreview(parsedSchedule.values, rounds)}
               </p>
             )}
           </label>
 
           <div className="flex items-center gap-3">
-            <Button onClick={handleSave} disabled={saving}>
+            <Button onClick={handleSave} disabled={saving || !!parsedSchedule.error}>
               {saving ? 'Saving…' : saved ? '✓ Saved!' : 'Save Config'}
             </Button>
             <Button variant="ghost" onClick={() => {

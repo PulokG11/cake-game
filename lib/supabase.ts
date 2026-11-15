@@ -10,7 +10,7 @@ import {
   ROLES,
   ROLE_LABELS,
 } from './types';
-import { generateGameCode, createInitialGameState, processRound } from './gameLogic';
+import { generateGameCode, createInitialGameState, processRound, resolveOrders } from './gameLogic';
 
 // ─── Client ───────────────────────────────────────────────────────────────────
 
@@ -268,14 +268,9 @@ export async function submitBotOrdersAndProcess(gameId: string): Promise<void> {
   const playersDone = (state.playersDoneOrdering ?? []) as Role[];
   if (ROLES.every(r => playersDone.includes(r))) return;
 
-  // Build final orders: use submitted value if available, else incomingOrder fallback
+  // Submitted orders as-is; every missing role uses the pass-through fallback
   const storedOrders = ((state as unknown as Record<string, unknown>).pendingOrders ?? {}) as Partial<Record<Role, number>>;
-  const finalOrders: Record<Role, number> = {} as Record<Role, number>;
-  for (const role of ROLES) {
-    finalOrders[role] = storedOrders[role] !== undefined
-      ? storedOrders[role]!
-      : (state.roles[role]?.incomingOrder ?? 0);
-  }
+  const finalOrders = resolveOrders(state, storedOrders);
 
   const newState = processRound(state, config, finalOrders);
   delete (newState as unknown as Record<string, unknown>).pendingOrders;

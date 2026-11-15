@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { subscribeToGame, getGame, updateGameState, updateFullGameState } from '@/lib/supabase';
-import { processRound } from '@/lib/gameLogic';
+import { processRound, resolveOrders, allHumansSubmitted } from '@/lib/gameLogic';
 import {
   Game, Role, ROLES, ROLE_LABELS, GameState,
 } from '@/lib/types';
@@ -30,6 +30,9 @@ export default function GamePage() {
   // Only auto-show tutorial in lobby; never interrupt an active game round.
   const [showTutorial, setShowTutorial] = useState(false);
   const autoSubmittedRef = useRef(false);
+  // Latest typed order, readable from async timer code; touched = player has edited the field.
+  const orderStrRef = useRef('0');
+  const orderTouchedRef = useRef(false);
   // Track which round this client submitted in — used to avoid resetting
   // submitted=false when Supabase fires a Realtime update for the SAME round
   // (e.g. another player updating playersDoneOrdering triggers the callback too).
@@ -78,24 +81,14 @@ export default function GamePage() {
         .pendingOrders ?? {}
     ) as Partial<Record<Role, number>>;
 
-    // Build full order set: already-stored first, then rational fill (= incoming demand)
-    const finalOrders: Record<Role, number> = {
-      retailer: 0, wholesaler: 0, distributor: 0, manufacturer: 0,
-    };
-    for (const role of ROLES) {
-      finalOrders[role] =
-        storedOrders[role] !== undefined
-          ? (storedOrders[role] as number)
-          : (freshGame.state.roles[role]?.incomingOrder ?? 0);
-    }
-    // Override with what this player has typed (even if not yet stored)
+    // Sparse ledger: submitted orders, plus this player's typed-but-unsubmitted value
+    // if they edited the field. Roles still missing fall back to pass-through.
+    const pending: Partial<Record<Role, number>> = { ...storedOrders };
     const myRoleLocal = sessionStorage.getItem('role') as Role | null;
-    if (myRoleLocal && storedOrders[myRoleLocal] === undefined) {
-      setOrderStr(prev => {
-        finalOrders[myRoleLocal] = Math.max(0, parseInt(prev) || 0);
-        return prev;
-      });
+    if (myRoleLocal && pending[myRoleLocal] === undefined && orderTouchedRef.current) {
+      pending[myRoleLocal] = Math.max(0, parseInt(orderStrRef.current) || 0);
     }
+    const finalOrders = resolveOrders(freshGame.state, pending);
 
     const newState = processRound(freshGame.state, freshGame.config, finalOrders);
     // Clear pending orders field
@@ -189,31 +182,27 @@ export default function GamePage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const storedOrders = ((freshGame.state as any).pendingOrders ?? {}) as Partial<Record<Role, number>>;
       const numericOrder = Math.max(0, parseInt(orderStr) || 0);
-      const mergedOrders: Record<Role, number> = {
-        retailer: 0, wholesaler: 0, distributor: 0, manufacturer: 0,
+      // Sparse ledger: only roles that actually submitted get an entry, so a missing
+      // role is never mistaken for a submitted 0 (F-03).
+      const pendingOrders: Partial<Record<Role, number>> = {
         ...storedOrders,
         [myRole]: numericOrder,
       };
 
-      // Check if all players have now submitted
-      const allPlayerIds = Object.keys(freshGame.players);
-      const allDone = allPlayerIds.every(id => playersDone.includes(id));
-
-      if (allDone) {
-        // Fill any remaining roles as a safe fallback
-        for (const role of ROLES) {
-          if (mergedOrders[role] === 0 && !storedOrders[role]) {
-            mergedOrders[role] = freshGame.state.roles[role]?.incomingOrder ?? 0;
-          }
-        }
-        const newState = processRound(freshGame.state, freshGame.config, mergedOrders);
+      // Bots never submit, so the round completes when every human has.
+      if (allHumansSubmitted(freshGame.players, playersDone)) {
+        const newState = processRound(
+          freshGame.state,
+          freshGame.config,
+          resolveOrders(freshGame.state, pendingOrders),
+        );
         delete (newState as GameState & { pendingOrders?: unknown }).pendingOrders;
         await updateFullGameState(gameId, newState);
       } else {
         await updateGameState(gameId, {
           playersDoneOrdering: playersDone,
           // @ts-expect-error temporary field
-          pendingOrders: mergedOrders,
+          pendingOrders,
         });
       }
 
@@ -394,6 +383,8 @@ export default function GamePage() {
               value={orderStr}
               onChange={e => {
                 const v = e.target.value.replace(/[^0-9]/g, '');
+                orderStrRef.current = v;
+                orderTouchedRef.current = true;
                 setOrderStr(v);
               }}
               className="w-28 border border-cake-300 rounded-lg px-3 py-2 text-lg font-bold text-center focus:outline-none focus:ring-2 focus:ring-cake-400"

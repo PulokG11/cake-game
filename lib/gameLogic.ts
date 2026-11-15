@@ -3,6 +3,7 @@ import {
   RoleState,
   GameState,
   GameConfig,
+  Player,
   DEFAULT_ROLE_STATE,
   ROLES,
   InventoryBucket,
@@ -243,6 +244,62 @@ export function processRound(
     phase: isEnded ? 'ended' : 'summary',
     playersDoneOrdering: [],
   };
+}
+
+// ─── Order capture (F-03) ─────────────────────────────────────────────────────
+
+/**
+ * Turn a sparse ledger of submitted orders into a full order set.
+ * Policy: a role with no submitted order (bot, slow teammate, timeout) orders
+ * its last incoming order ("pass-through"). A submitted 0 is kept as 0.
+ */
+export function resolveOrders(
+  state: GameState,
+  pending: Partial<Record<Role, number>> | undefined,
+): Record<Role, number> {
+  const orders = {} as Record<Role, number>;
+  for (const role of ROLES) {
+    const submitted = pending?.[role];
+    orders[role] =
+      typeof submitted === 'number' && Number.isFinite(submitted) && submitted >= 0
+        ? submitted
+        : (state.roles[role]?.incomingOrder ?? 0);
+  }
+  return orders;
+}
+
+/** True once every human player has submitted; bots never submit and are excluded. */
+export function allHumansSubmitted(
+  players: Record<string, Player>,
+  playersDone: string[],
+): boolean {
+  const humans = Object.values(players).filter(p => !p.isBot);
+  return humans.length > 0 && humans.every(p => playersDone.includes(p.id));
+}
+
+// ─── Demand schedule parsing (F-05) ───────────────────────────────────────────
+
+/**
+ * Parse a facilitator-entered demand schedule such as "4, 4, 8, 12".
+ * Empty tokens (trailing/leading/double separators) are ignored. Any token that
+ * is not a non-negative whole number is an error instead of silently becoming 0,
+ * because the last schedule value repeats for the rest of the game.
+ */
+export function parseDemandSchedule(raw: string): { values: number[]; error?: string } {
+  const tokens = raw.split(/[,;\s]+/).filter(t => t.length > 0);
+  if (tokens.length === 0) return { values: [], error: 'Enter at least one demand value.' };
+
+  const values: number[] = [];
+  for (const token of tokens) {
+    if (!/^\d+$/.test(token)) {
+      return {
+        values: [],
+        error: `"${token}" is not a valid demand value. Use whole numbers separated by commas.`,
+      };
+    }
+    values.push(parseInt(token, 10));
+  }
+  return { values };
 }
 
 // ─── Aggregates ───────────────────────────────────────────────────────────────
