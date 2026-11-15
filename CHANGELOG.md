@@ -4,6 +4,38 @@ Every release is a git tag. Roll back a file with
 `git checkout <tag> -- <path>` then commit; roll back everything with `git revert`
 of the release commit. Finding IDs (F-xx) refer to PRD v2 §9.4.
 
+## v0.4.0 — Express Mode
+
+The first screen now asks for a mode. The existing flow is unchanged and is now called
+**Champions Mode** (`/champions`).
+
+**Express Mode (`/express`)**
+- No email and no facilitator: players start a game themselves and it runs itself.
+- 1 to 4 people can play. Empty roles are played by AI bots (the same pass-through
+  ordering policy as Champions bots). One player starts instantly with 3 bots.
+- Role choice: Manufacturer, Distributor, Wholesaler, Retailer, or Random.
+- Multi-player: the creator gets a 6-character code and invite link; joiners claim
+  an open role (or Random). The game auto-starts when the expected number of humans
+  has joined, or the host can start early and bots fill the rest.
+- Round completion waits only for human players, so a solo game advances the moment
+  the player submits.
+
+**Backend:** `supabase/express_mode.sql` adds `express_join`, `express_start` and
+`express_fill_and_start` (atomic role claiming under a row lock). Express games are
+marked `config.mode = 'express'` and wait in phase `onboarding`, so the Champions
+`assign_player_atomic` never places email players into them. The admin panel, Start All
+and Delete All ignore Express games. Apply the SQL file after `schema.sql`.
+
+**Other:** the "players submitted" counter counts humans only; results screen has a
+Play again link in Express.
+
+**Known limits:** Express games are never cleaned up automatically; the game is driven
+by player browsers, so if every player closes their tab it stalls.
+
+**Rollback:** `git revert` the v0.4.0 commit (restores the old home page). The SQL
+functions are additive and harmless to leave; to remove:
+`drop function express_join(text,text,text), express_start(text,text), express_fill_and_start(text);`
+
 ## v0.3.0 — Red Velvet & Black Forest redesign
 
 Visual redesign only; no game rules, data or routes changed.

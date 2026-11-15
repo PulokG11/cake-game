@@ -74,10 +74,11 @@ export async function findGameByCode(code: string): Promise<Game | null> {
   return rowToGame(data);
 }
 
+/** Champions Mode games only: Express games are facilitator-free and never listed here. */
 export async function getAllGames(): Promise<Game[]> {
   const { data, error } = await supabase.from('games').select('*');
   if (error || !data) return [];
-  return data.map(rowToGame);
+  return data.map(rowToGame).filter(g => g.config?.mode !== 'express');
 }
 
 export async function updateGameState(gameId: string, state: Partial<GameState>): Promise<void> {
@@ -294,7 +295,7 @@ export async function advanceFromSummary(gameId: string): Promise<void> {
 }
 
 export async function deleteAllGames(): Promise<void> {
-  await supabase.from('games').delete().neq('id', '');
+  await supabase.from('games').delete().or('config->>mode.is.null,config->>mode.neq.express');
 }
 
 export async function resetGameValues(gameId: string): Promise<void> {
@@ -314,6 +315,95 @@ export async function resetGameFull(gameId: string): Promise<void> {
     .from('games')
     .update({ state: freshState, players: {} })
     .eq('id', gameId);
+  if (error) throw new Error(error.message);
+}
+
+// ─── Express Mode ─────────────────────────────────────────────────────────────
+
+export type RoleChoice = Role | 'random';
+
+export interface ExpressResult {
+  gameId: string;
+  playerId: string;
+  role: Role;
+  started: boolean;
+}
+
+function newPlayerId(): string {
+  return 'x_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function botPlayer(role: Role, teamName: string): Player {
+  return {
+    id: `bot_${role}`,
+    name: `Bot (${ROLE_LABELS[role]})`,
+    email: '',
+    role,
+    isBot: true,
+    isAdmin: false,
+    joinedAt: Date.now(),
+    teamName,
+    teamNumber: 1,
+  };
+}
+
+/** Create an Express game. With one expected player it starts immediately with 3 bots. */
+export async function createExpressGame(
+  choice: RoleChoice,
+  expectedPlayers: number,
+): Promise<ExpressResult & { code: string }> {
+  const role: Role = choice === 'random' ? ROLES[Math.floor(Math.random() * ROLES.length)] : choice;
+  const playerId = newPlayerId();
+  const config: GameConfig = { ...DEFAULT_CONFIG, mode: 'express', expectedPlayers };
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const code = generateGameCode();
+    const gameId = 'x_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    const teamName = `Express ${code}`;
+    const players: Record<string, Player> = {
+      [playerId]: {
+        id: playerId, name: 'Player', email: '', role, isAdmin: false, isBot: false,
+        joinedAt: Date.now(), teamName, teamNumber: 1,
+      },
+    };
+    const state = createInitialGameState(config);
+    state.phase = 'onboarding';
+    const startNow = expectedPlayers <= 1;
+    if (startNow) {
+      for (const r of ROLES) if (r !== role) players[`bot_${r}`] = botPlayer(r, teamName);
+      state.phase = 'ordering';
+      state.roundStartedAt = Date.now();
+    }
+
+    const { error } = await supabase.from('games').insert({
+      id: gameId, code, host_id: playerId, config, state, players, created_at: Date.now(),
+    });
+    if (!error) return { gameId, playerId, role, started: startNow, code };
+    if (error.code !== '23505') throw new Error(error.message); // retry only on duplicate code
+  }
+  throw new Error('Could not create a game. Please try again.');
+}
+
+export async function findExpressGame(code: string): Promise<Game | null> {
+  const game = await findGameByCode(code.trim());
+  return game && game.config?.mode === 'express' ? game : null;
+}
+
+export async function joinExpressGame(code: string, choice: RoleChoice): Promise<ExpressResult> {
+  const playerId = newPlayerId();
+  const { data, error } = await supabase.rpc('express_join', {
+    p_code: code.trim(),
+    p_player_id: playerId,
+    p_role: choice,
+  });
+  if (error) throw new Error(error.message);
+  const r = data as { gameId: string; role: Role; started: boolean };
+  return { gameId: r.gameId, playerId, role: r.role, started: r.started };
+}
+
+/** Host only: start now and let bots take every empty role. */
+export async function startExpressGame(gameId: string, playerId: string): Promise<void> {
+  const { error } = await supabase.rpc('express_start', { p_game_id: gameId, p_player_id: playerId });
   if (error) throw new Error(error.message);
 }
 

@@ -184,3 +184,49 @@ export function RoleIcon({ role, size = 22, className = '' }: { role: Role; size
     </svg>
   );
 }
+
+function StrokeIcon({ size = 22, className = '', children }: { size?: number; className?: string; children: React.ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  );
+}
+
+export function TrophyIcon(props: { size?: number; className?: string }) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M8 4h8v5a4 4 0 0 1-8 0V4Z" />
+      <path d="M8 6H5a1 1 0 0 0-1 1c0 2.2 1.6 3.7 4 4M16 6h3a1 1 0 0 1 1 1c0 2.2-1.6 3.7-4 4" />
+      <path d="M12 13v4M8.5 20h7M10 17h4" />
+    </StrokeIcon>
+  );
+}
+
+export function BoltIcon(props: { size?: number; className?: string }) {
+  return (
+    <StrokeIcon {...props}>
+      <path d="M13 3 5 13.5h6L10 21l8-10.5h-6L13 3Z" />
+    </StrokeIcon>
+  );
+}
+
+export function DiceIcon(props: { size?: number; className?: string }) {
+  return (
+    <StrokeIcon {...props}>
+      <rect x="4" y="4" width="16" height="16" rx="3.5" />
+      <path d="M8.5 8.5h.01M15.5 8.5h.01M12 12h.01M8.5 15.5h.01M15.5 15.5h.01" strokeWidth="2.2" />
+    </StrokeIcon>
+  );
+}

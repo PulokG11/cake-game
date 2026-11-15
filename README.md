@@ -28,7 +28,12 @@ Repository: https://github.com/PulokG11/cake-game
 
 If a role has not submitted when the timer ends (a bot, or a slow teammate), it orders whatever it was last asked for. A submitted 0 stays 0. Teams with bots finish a round as soon as every human has submitted.
 
-## For facilitators
+## Two ways to play
+
+- **Express Mode** (`/express/`): no email, no facilitator. Play solo or with up to 3 friends via a share code; AI bots fill empty roles. Pick a role or choose Random.
+- **Champions Mode** (`/champions/`): the facilitated workshop with email sign-in and four-person teams, described below.
+
+## For facilitators (Champions Mode)
 
 1. Open the facilitator panel and review the game configuration (rounds, costs, demand schedule, timer). Changes apply to new teams only.
 2. Share the player link. Players enter an email and are auto-assigned a team and role.
@@ -81,6 +86,7 @@ Every release is a git tag; see [CHANGELOG.md](CHANGELOG.md) for what changed an
 | `v0.1.0` | Fixes for missing-order handling (F-03) and demand-schedule parsing (F-05) |
 | `v0.2.0` | GitHub Pages deployment |
 | `v0.3.0` | Red velvet / black forest redesign |
+| `v0.4.0` | Express Mode (solo/bots, no email, no facilitator) |
 
 ## Known limitations
 

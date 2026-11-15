@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Game, ROLES, ROLE_LABELS, Role, RoleState } from '@/lib/types';
 import { Card } from './ui/Card';
 import { TutorialModal } from './TutorialModal';
@@ -137,9 +138,11 @@ const CHART_CONFIGS: ChartConfig[] = [
 interface GameResultsProps {
   game: Game;
   teamName?: string;
+  /** Shows a Play again link (Express Mode). */
+  playAgainHref?: string;
 }
 
-export function GameResults({ game, teamName }: GameResultsProps) {
+export function GameResults({ game, teamName, playAgainHref }: GameResultsProps) {
   const [showTutorial, setShowTutorial] = useState(false);
   const { state, config } = game;
 
@@ -169,6 +172,16 @@ export function GameResults({ game, teamName }: GameResultsProps) {
         >
           Replay tutorial
         </button>
+        {playAgainHref && (
+          <div className="mt-4">
+            <Link
+              href={playAgainHref}
+              className="inline-flex items-center rounded-xl bg-cake-600 hover:bg-cake-700 text-white font-semibold px-5 py-2.5 text-sm shadow-sm"
+            >
+              Play again →
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Team totals */}

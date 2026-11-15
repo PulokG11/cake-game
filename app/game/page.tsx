@@ -237,7 +237,15 @@ function GameContent() {
   // Derive team name from the players map (server-sourced, always accurate)
   const teamName = myPlayerId ? (game.players[myPlayerId]?.teamName ?? '') : '';
 
-  if (state.phase === 'ended') return <GameResults game={game} teamName={teamName} />;
+  if (state.phase === 'ended') {
+    return (
+      <GameResults
+        game={game}
+        teamName={teamName}
+        playAgainHref={config.mode === 'express' ? '/express' : undefined}
+      />
+    );
+  }
 
   if (state.phase === 'summary') {
     return (
@@ -261,7 +269,9 @@ function GameContent() {
       <>
         {showTutorial && <TutorialModal onClose={() => setShowTutorial(false)} />}
         <div className="text-center mt-20 space-y-4">
-          <p className="text-lg text-gray-400">⏳ Waiting for the facilitator to start the game...</p>
+          <p className="text-lg text-gray-400">
+            {config.mode === 'express' ? 'Waiting for the game to start...' : 'Waiting for the facilitator to start the game...'}
+          </p>
           {!showTutorial && (
             <button
               onClick={() => setShowTutorial(true)}
@@ -277,7 +287,8 @@ function GameContent() {
 
   // ── Ordering phase ──────────────────────────────────────────────────────────
   const myRs = myRole ? state.roles[myRole] : null;
-  const playerCount = Object.keys(game.players).length;
+  // Bots never submit, so count only human players.
+  const playerCount = Object.values(game.players).filter(p => !p.isBot).length;
   const doneCount = state.playersDoneOrdering?.length ?? 0;
   const timerSeconds = config.orderTimerSeconds ?? 30;
 

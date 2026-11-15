@@ -74,7 +74,13 @@ export interface GameConfig {
   demandSchedule: number[];
   /** Seconds players have to submit before auto-submit fires (default 30). */
   orderTimerSeconds: number;
+  /** 'express' = no facilitator, bots fill empty roles. Absent = Champions Mode. */
+  mode?: GameMode;
+  /** Express only: how many humans the game waits for before auto-starting. */
+  expectedPlayers?: number;
 }
+
+export type GameMode = 'champions' | 'express';
 
 export const DEFAULT_CONFIG: GameConfig = {
   totalRounds: 20,
