@@ -3,3 +3,15 @@ Thumbs.db
 *.log
 node_modules/
 
+
+# Cake-game upstream ignores
+.next/
+out/
+build/
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+
+# Local source archive (not part of the repo)
+Cake-game-master.zip
