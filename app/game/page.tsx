@@ -1,7 +1,7 @@
 'use client';
 import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { subscribeToGame, getGame, updateGameState, updateFullGameState } from '@/lib/supabase';
+import { subscribeToGame, getGame, updateGameState, updateFullGameState } from '@/lib/api';
 import { processRound, resolveOrders, allHumansSubmitted } from '@/lib/gameLogic';
 import {
   Game, Role, ROLES, ROLE_LABELS, GameState,

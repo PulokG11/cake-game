@@ -1,5 +1,7 @@
 # Cake Game — Handoff & Checkpoint
 
+> **Historical (upstream) document.** Since v0.5.0-neon this fork runs on Neon, not Supabase or Vercel, and the facilitator password is checked on the server. See README.md (Backend, Deployment) and CHANGELOG.md for the current setup.
+
 ## Current checkpoint — v3
 
 | Item | Value |

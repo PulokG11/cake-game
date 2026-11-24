@@ -12,7 +12,7 @@ import {
   updateGameState,
   submitBotOrdersAndProcess,
   advanceFromSummary,
-} from '@/lib/supabase';
+} from '@/lib/api';
 import { Game, GameConfig, ROLES, ROLE_LABELS, SessionSettings, Role, DEFAULT_CONFIG } from '@/lib/types';
 import { parseDemandSchedule } from '@/lib/gameLogic';
 import { Button } from '@/components/ui/Button';

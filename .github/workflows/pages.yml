@@ -25,12 +25,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Type-check (site and Neon Function)
+        run: npx tsc --noEmit
+      - name: Bundle the Neon Function (deployed separately; see README)
+        run: npm run api:build
       - run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /cake-game
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          NEXT_PUBLIC_ADMIN_PASSWORD: ${{ secrets.NEXT_PUBLIC_ADMIN_PASSWORD }}
+          # Public URL of the Neon Function "api" on the production branch
+          NEXT_PUBLIC_API_URL: https://br-sparkling-tooth-bijr1t13-api.compute.c-5.ap-southeast-1.aws.neon.tech
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

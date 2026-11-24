@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Role, ROLES, ROLE_LABELS, ROLE_TAGS } from '@/lib/types';
-import type { RoleChoice } from '@/lib/supabase';
+import type { RoleChoice } from '@/lib/api';
 import { RoleIcon, DiceIcon } from './brand/Brand';
 
 interface RolePickerProps {

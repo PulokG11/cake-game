@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { autoAssignPlayer } from '@/lib/supabase';
+import { autoAssignPlayer } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { CakeHero, RoleIcon } from '@/components/brand/Brand';

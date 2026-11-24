@@ -1,40 +1,44 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { clearAdminSession, hasAdminSession, setAdminSession, verifyAdminPassword } from '@/lib/api';
 
-const SESSION_KEY = 'admin_auth';
-// Password is set via NEXT_PUBLIC_ADMIN_PASSWORD env var.
-// Falls back to 'cakegame2024' if the env var is not set.
-const ADMIN_PASSWORD =
-  process.env.NEXT_PUBLIC_ADMIN_PASSWORD ?? 'cakegame2024';
+// The facilitator password is checked by the game server (a hash is stored in the database),
+// so it is no longer built into the site's JavaScript.
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [authed, setAuthed] = useState(false);
   const [checked, setChecked] = useState(false);
   const [input, setInput] = useState('');
   const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    // Check sessionStorage on mount (persists for the browser tab session)
-    if (sessionStorage.getItem(SESSION_KEY) === 'true') {
-      setAuthed(true);
-    }
+    // The password is kept for this browser tab session only
+    if (hasAdminSession()) setAuthed(true);
     setChecked(true);
   }, []);
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (input === ADMIN_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, 'true');
-      setAuthed(true);
-      setError('');
-    } else {
-      setError('Incorrect password. Try again.');
-      setInput('');
+    setBusy(true);
+    try {
+      if (await verifyAdminPassword(input)) {
+        setAdminSession(input.trim());
+        setAuthed(true);
+        setError('');
+      } else {
+        setError('Incorrect password. Try again.');
+        setInput('');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not check the password. Try again.');
+    } finally {
+      setBusy(false);
     }
   }
 
   function handleLogout() {
-    sessionStorage.removeItem(SESSION_KEY);
+    clearAdminSession();
     setAuthed(false);
     setInput('');
   }
@@ -70,9 +74,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <button
               type="submit"
-              className="w-full bg-cake-600 hover:bg-cake-700 text-white font-semibold rounded-xl py-2.5 text-sm transition-colors shadow-sm"
+              disabled={busy}
+              className="w-full bg-cake-600 hover:bg-cake-700 disabled:opacity-60 text-white font-semibold rounded-xl py-2.5 text-sm transition-colors shadow-sm"
             >
-              Enter Admin Panel
+              {busy ? 'Checking…' : 'Enter Admin Panel'}
             </button>
           </form>
         </div>

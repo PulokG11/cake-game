@@ -8,7 +8,7 @@ import {
   joinExpressGame,
   ExpressResult,
   RoleChoice,
-} from '@/lib/supabase';
+} from '@/lib/api';
 import { Game, Role } from '@/lib/types';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';

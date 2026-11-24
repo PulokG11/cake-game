@@ -15,3 +15,9 @@ next-env.d.ts
 
 # Local source archive (not part of the repo)
 Cake-game-master.zip
+
+# Neon Function bundle
+dist-function/
+
+# Local env files for other Neon branches
+.env*.local

@@ -4,6 +4,34 @@ Every release is a git tag. Roll back a file with
 `git checkout <tag> -- <path>` then commit; roll back everything with `git revert`
 of the release commit. Finding IDs (F-xx) refer to PRD v2 §9.4.
 
+## v0.5.0-neon — Backend moved from Supabase to Neon
+
+The Supabase project had been paused for inactivity, so the live site could not load
+or save games. The backend now runs on Neon.
+
+- **Database:** Neon project `cake-game` (`late-glitter-03957082`, Postgres 18,
+  aws-ap-southeast-1). `db/schema.sql` carries over the tables and Postgres functions;
+  the Supabase-only parts (anon grants, realtime publication) are gone.
+- **API:** a Neon Function (`functions/api/index.ts`, commands in `lib/server/`) runs every
+  read and write. The browser no longer talks to the database, so the open-database
+  finding **F-01** is closed for Champions and Express alike: anonymous visitors can no
+  longer list games, read player emails, or delete games.
+- **Facilitator password** is checked on the server against a salted scrypt hash
+  (`npm run admin:password`). It is no longer baked into the site's JavaScript, and the
+  `NEXT_PUBLIC_ADMIN_PASSWORD` build secret is unused.
+- **Fewer races:** Champions sign-in now creates a new team inside the same locked
+  Postgres call that seats players, so two players arriving together can no longer each
+  get a one-person team. The watchdog writes a round only if the game is unchanged since
+  it read it, so two admin tabs cannot process the same round twice. Partial state
+  updates are a single SQL merge instead of read-modify-write.
+- **Live updates** poll the API (1.5 s in a game, 2.5 s for the admin list) instead of
+  Supabase Realtime, and only re-render on change.
+- `lib/supabase.ts` → `lib/api.ts` (same function names); `@supabase/supabase-js` removed.
+- Tests: `scripts/test-api.mjs` runs 28 end-to-end API checks on the `dev` branch.
+
+Rollback: `git checkout v0.4.0 -- .` and restore the Supabase project (it only needs
+un-pausing in the Supabase dashboard), then push.
+
 ## v0.4.0 — Express Mode
 
 The first screen now asks for a mode. The existing flow is unchanged and is now called

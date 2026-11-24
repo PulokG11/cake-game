@@ -2,7 +2,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getGame, subscribeToGame, startExpressGame } from '@/lib/supabase';
+import { getGame, subscribeToGame, startExpressGame } from '@/lib/api';
 import { Game, ROLES, ROLE_LABELS, ROLE_TAGS } from '@/lib/types';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';

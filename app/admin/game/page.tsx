@@ -2,7 +2,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { getGame, subscribeToGame, updateGameState, updateFullGameState } from '@/lib/supabase';
+import { getGame, subscribeToGame, updateGameState, updateFullGameState } from '@/lib/api';
 import { processRound } from '@/lib/gameLogic';
 import { Game, ROLES, ROLE_LABELS, Role, RoleState, GameState } from '@/lib/types';
 import { RolePanel } from '@/components/RolePanel';

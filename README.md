@@ -44,35 +44,49 @@ The Product Guide in this folder covers facilitation, troubleshooting and refere
 
 ## Tech stack
 
-Next.js 15 (static export), React 19, Tailwind CSS, TypeScript, Supabase (Postgres + Realtime), hosted on GitHub Pages. The look is a red velvet / black forest theme (Playfair Display + DM Sans, inline SVG logo and illustrations); its palette lives in `tailwind.config.ts` and `lib/theme.ts`. The rules engine in `lib/gameLogic.ts` is a pure function covered by tests.
+Next.js 15 (static export), React 19, Tailwind CSS, TypeScript, hosted on GitHub Pages. The backend is Neon: Postgres plus a Neon Function (`functions/api/index.ts`) that the site calls; the browser never holds a database credential. The look is a red velvet / black forest theme (Playfair Display + DM Sans, inline SVG logo and illustrations); its palette lives in `tailwind.config.ts` and `lib/theme.ts`. The rules engine in `lib/gameLogic.ts` is a pure function covered by tests.
+
+## Backend (Neon)
+
+- Neon project `cake-game` (`late-glitter-03957082`, Postgres 18, aws-ap-southeast-1). Branch `main` is production; branch `dev` is for local testing.
+- `db/schema.sql` creates the tables (`games`, `session_settings`, `admin_settings`) and the Postgres functions that seat players atomically (`assign_player_atomic`, `express_join`, `express_start`). Apply it with `npm run db:setup`.
+- The Neon Function `api` (`POST /rpc` with a command name) runs every read and write. Facilitator commands need the facilitator password, which the server checks against a salted hash in `admin_settings`; players never see each other's emails.
+- Live updates poll the API (every 1.5 s in a game, 2.5 s on the admin page) and only re-render when something changed.
+
+Set or change the facilitator password (asks for it; only a hash is stored):
+
+```bash
+npm run admin:password
+```
 
 ## Run locally
 
 ```bash
-cp .env.example .env.local   # add your Supabase URL and anon key
 npm install
-npm run dev                  # http://localhost:3000
+# .env.local: DATABASE_URL=<Neon connection string>, NEXT_PUBLIC_API_URL=http://localhost:8788
+npm run api:dev              # the API on http://localhost:8788 (same bundle that is deployed)
+npm run dev                  # the site on http://localhost:3000
 npm test                     # game-logic tests
 ```
 
-To set up a fresh Supabase project, run `supabase/schema.sql` and then `supabase/fix_team_number_sequence.sql` in the SQL editor.
+Point `api:dev` at the `dev` branch (put its connection string in `.env.dev.local` and run `node --env-file=.env.dev.local scripts/serve-api.mjs`) so testing never touches live games. `node --env-file=.env.dev.local scripts/test-api.mjs` runs 28 end-to-end API checks there and cleans up after itself; it refuses to run against production.
 
 ## Deployment
 
-Pushing to `main` runs `.github/workflows/pages.yml`: install, test, build a static export, then publish to GitHub Pages. Build-time settings come from these repository secrets:
-
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `NEXT_PUBLIC_ADMIN_PASSWORD`
+- **Site:** pushing to `main` runs `.github/workflows/pages.yml`: install, test, type-check, build the static export with `NEXT_PUBLIC_API_URL` set to the function, publish to GitHub Pages. No secrets are needed.
+- **API:** `npm run api:build` bundles the function (about 13 KB) into `dist-function/api.zip`; upload it as function `api` on the `main` branch (Neon MCP `deploy_function` with `dist-function/api.zip.b64`, or the Neon CLI). `GET <function>/health` shows the deployed build.
+- **Schema:** `npm run db:setup` (idempotent).
 
 ## Project structure
 
 ```
 app/            Pages: join (/), lobby (/assigned), game (/game?id=), admin (/admin, /admin/game?id=)
 components/     Role panel, inventory age buckets, weekly summary, results, tutorial, brand (logo, illustrations, role icons)
-lib/            Game rules (gameLogic.ts), types, Supabase client and helpers
+lib/            Game rules (gameLogic.ts), types, API client (api.ts), server commands (server/)
+functions/api/  Neon Function entry point
+db/             Database schema for Neon
+scripts/        Schema setup, facilitator password, local API server, API checks, function packaging
 public/         Animated tutorial (tutorial.html)
-supabase/       Database schema and the atomic join function
 .github/        Pages deployment workflow
 ```
 
@@ -87,6 +101,7 @@ Every release is a git tag; see [CHANGELOG.md](CHANGELOG.md) for what changed an
 | `v0.2.0` | GitHub Pages deployment |
 | `v0.3.0` | Red velvet / black forest redesign |
 | `v0.4.0` | Express Mode (solo/bots, no email, no facilitator) |
+| `v0.5.0-neon` | Backend moved from Supabase to Neon; facilitator password checked on the server |
 
 ## Known limitations
 
