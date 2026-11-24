@@ -115,7 +115,3 @@ Every release is a git tag; see [CHANGELOG.md](CHANGELOG.md) for what changed an
 - `Cake_Game_PRD_v2.docx`: requirements, findings register and roadmap
 - `Cake_Game_TADD_v2.docx`: architecture and technical design
 - `HANDOFF.md`: notes carried over from the upstream project
-
-## Credits
-
-Based on [NarasimhaKamathB/Cake-game](https://github.com/NarasimhaKamathB/Cake-game).
