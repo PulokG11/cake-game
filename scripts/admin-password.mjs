@@ -2,7 +2,6 @@
 // Run: npm run admin:password   (asks for the password; nothing is echoed or written to disk)
 import { randomBytes, scryptSync } from 'node:crypto';
 import { createInterface } from 'node:readline';
-import { Writable } from 'node:stream';
 import { Pool } from '@neondatabase/serverless';
 
 const url = process.env.DATABASE_URL;
@@ -11,17 +10,46 @@ if (!url) {
   process.exit(1);
 }
 
+/** Read one line, showing * for each character typed. Falls back to a plain line read without a terminal. */
 function ask(prompt) {
-  const muted = new Writable({ write: (_chunk, _enc, cb) => cb() });
-  const rl = createInterface({ input: process.stdin, output: muted, terminal: true });
   process.stdout.write(prompt);
-  return new Promise(resolve =>
-    rl.question('', answer => {
-      rl.close();
-      process.stdout.write('\n');
-      resolve(answer);
-    }),
-  );
+  const stdin = process.stdin;
+  if (!stdin.isTTY) {
+    const rl = createInterface({ input: stdin });
+    return new Promise(resolve => rl.once('line', line => { rl.close(); resolve(line); }));
+  }
+  return new Promise(resolve => {
+    let value = '';
+    const finish = () => {
+      stdin.off('data', onData);
+      stdin.setRawMode(false);
+      stdin.pause();
+      process.stdout.write('\r\n');
+      resolve(value);
+    };
+    const onData = chunk => {
+      for (const ch of chunk) {
+        if (ch === '\r' || ch === '\n') return finish();
+        if (ch === '\u0003') {
+          process.stdout.write('\nCancelled. Nothing was changed.\n');
+          process.exit(130);
+        }
+        if (ch === '\u007f' || ch === '\b') {
+          if (value) {
+            value = value.slice(0, -1);
+            process.stdout.write('\b \b');
+          }
+        } else if (ch >= ' ') {
+          value += ch;
+          process.stdout.write('*');
+        }
+      }
+    };
+    stdin.setRawMode(true);
+    stdin.setEncoding('utf8');
+    stdin.resume();
+    stdin.on('data', onData);
+  });
 }
 
 const password = (await ask('New facilitator password (min 8 characters): ')).trim();
